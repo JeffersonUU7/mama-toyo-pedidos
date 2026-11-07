@@ -7,6 +7,18 @@ desplegado como clúster con balanceo de carga para mantenerse disponible en la 
 
 > Los platos y precios del sistema son **datos de ejemplo** para la demostración.
 
+Pollo frito (porción) $3.50 – $4.50
+Pollo asado (porción) $3.50 – $4.50
+Chow mein con pollo $3.00 – $4.00
+Pastelitos o empanadas (orden) $2.00 – $3.00
+Carne de res guisada $4.00 – $5.00
+Carne en salsa con verduras $4.00 – $5.00
+Arroz (acompañamiento) $0.75 – $1.25
+Ensalada de coditos $0.75 – $1.50
+Ensalada fresca $0.50 – $1.00
+Sopa de gallina india $5.00 – $8.00
+
+
 ## Equipo
 
 | N.º | Nombre | Usuario de GitHub | Responsabilidad principal |
