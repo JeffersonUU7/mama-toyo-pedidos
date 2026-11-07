@@ -1,0 +1,39 @@
+AVANCES - 03 INTERFAZ DE MENU Y PEDIDOS
+=======================================================================
+
+Nombre completo:
+Carnet:
+Usuario de GitHub:
+Area: Interfaz de menu y pedidos
+
+(Completa tus datos. Este archivo es SOLO TUYO: nadie mas lo edita.)
+
+
+TAREAS (cambia [ ] por [x] cuando las termines)
+-----------------------------------------------------------------------
+[ ] Registro: instalar herramientas, clonar, probar npm run dev
+[ ] Registro: completar mis datos en este archivo y abrir mi primer PR
+[ ] Ronda 1: crear la carpeta web/ con la pagina del menu del dia (consume /menu)
+[ ] Ronda 1: formulario de pedido (envia a /pedidos y muestra el numero de confirmacion)
+[ ] Ronda 1: vista de cocina con pedidos pendientes (consume /cocina)
+[ ] Ronda 2: conectar la interfaz al balanceador (puerto 8080)
+[ ] Ronda 3: ensayo de la defensa oral
+
+REGISTRO DE AVANCES
+-----------------------------------------------------------------------
+Agrega una entrada NUEVA al final por cada Pull Request.
+Copia el bloque de abajo, pegalo debajo y llenalo.
+
+>>> ENTRADA (copia desde aqui)
+Fecha:
+Que hice:
+Archivos que toque:
+Rama / numero de PR:
+Como lo probe:
+Bloqueos o dudas:
+<<< (hasta aqui)
+
+
+ENTRADAS
+-----------------------------------------------------------------------
+

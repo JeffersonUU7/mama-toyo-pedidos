@@ -71,15 +71,19 @@ curl -X POST http://localhost:8080/pedidos \
 ```
 src/            Código de la app (Express/TypeScript)
 nginx/          Configuración del balanceador
-docs/           Reparto de tareas, decisiones y documentación
+avances/        Un archivo de avances por integrante
+docs/           Reparto de tareas, orden de trabajo, decisiones y documentación
 Dockerfile      Imagen de cada nodo
 docker-compose.yml   Clúster: 2 nodos + Nginx
 ```
 
 ## Cómo trabajamos
 
-Lee [CONTRIBUTING.md](CONTRIBUTING.md) antes de tu primer cambio.
-Las tareas por persona y por entrega están en [docs/REPARTO.md](docs/REPARTO.md).
+1. Empieza por [LEEME_PRIMERO.txt](LEEME_PRIMERO.txt).
+2. Reglas de ramas y Pull Requests: [CONTRIBUTING.md](CONTRIBUTING.md).
+3. Orden de trabajo y dependencias: [docs/ORDEN_DE_TRABAJO.md](docs/ORDEN_DE_TRABAJO.md).
+4. Tareas por persona y por entrega: [docs/REPARTO.md](docs/REPARTO.md).
+5. Registro de avances de cada integrante: carpeta [avances/](avances/).
 
 ## Entregas
 

@@ -2,13 +2,13 @@
 
 (Una o dos líneas)
 
-## Tarea relacionada
+## Área / integrante
 
-Closes #
+(Ejemplo: 03 Interfaz – nombre)
 
 ## Checklist
 
-- [ ] Compila: `npm run build`
+- [ ] Compila: `npm run build` (si toqué código)
 - [ ] Lo probé
+- [ ] Actualicé mi archivo en `avances/`
 - [ ] No subí `.env` ni secretos
-- [ ] Actualicé la documentación si hacía falta

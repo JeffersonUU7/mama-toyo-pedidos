@@ -1,0 +1,115 @@
+MAMA TOYO - PEDIDOS PARA LLEVAR
+LEE ESTO PRIMERO
+=======================================================================
+
+Este es el repositorio del Proyecto de Catedra (Laboratorio 3) de
+Gestion de Servidores Web. Aqui trabajamos los 6 integrantes.
+El coordinador revisa y aprueba todo lo que se integra a "main".
+
+
+DONDE SE ESCRIBEN LOS COMANDOS (importante)
+-----------------------------------------------------------------------
+Todos los comandos se escriben en GIT BASH (se instala junto con Git).
+
+Para abrirlo EN LA CARPETA CORRECTA:
+  1. Abre la carpeta "mama-toyo-pedidos" en el Explorador de archivos.
+  2. Clic derecho en un espacio vacio -> "Open Git Bash here".
+     (En Windows 11: "Mostrar mas opciones" -> "Open Git Bash here")
+  3. Mira la linea de la consola: debe terminar en "mama-toyo-pedidos".
+     Si termina solo en "~", NO estas en la carpeta del proyecto.
+
+NUNCA ejecutes "git init" en este proyecto. El repositorio ya existe.
+
+
+PASO 0. INSTALAR (una sola vez)
+-----------------------------------------------------------------------
+  - Git:            https://git-scm.com
+  - Node.js 20+:    https://nodejs.org
+  - Docker Desktop: https://www.docker.com/products/docker-desktop
+  - VS Code:        https://code.visualstudio.com (o tu editor favorito)
+
+Luego configura tu identidad (en Git Bash, una sola vez):
+  git config --global user.name "Tu Nombre"
+  git config --global user.email "tu-correo@ejemplo.com"
+(usa el mismo correo de tu cuenta de GitHub)
+
+
+PASO 1. ACEPTAR LA INVITACION
+-----------------------------------------------------------------------
+El coordinador te invito al repositorio. Te llega un correo de GitHub,
+o entra a https://github.com/notifications y pulsa "Accept invitation".
+
+
+PASO 2. DESCARGAR EL PROYECTO (clonar)
+-----------------------------------------------------------------------
+En Git Bash (abierto en cualquier lugar):
+  cd ~/Documents
+  git clone URL-DEL-REPOSITORIO
+  cd mama-toyo-pedidos
+
+La URL esta en el boton verde "Code" del repositorio en GitHub.
+
+
+PASO 3. COMPROBAR QUE FUNCIONA
+-----------------------------------------------------------------------
+  npm install
+  npm run dev
+
+Abre en el navegador: http://localhost:3000/health
+Debe mostrar:  {"status":"ok","node":"local"}
+Para detenerlo: Ctrl + C
+
+
+PASO 4. CREAR TU RAMA
+-----------------------------------------------------------------------
+Nunca trabajes en "main". Crea tu rama:
+  git checkout -b avance/tunombre-registro
+
+
+PASO 5. COMPLETAR TU ARCHIVO DE AVANCES
+-----------------------------------------------------------------------
+En la carpeta "avances" hay un archivo .txt por area.
+Tu archivo es el que corresponde a TU NUMERO en la tabla del equipo
+(el coordinador te dira cual es).
+
+Ejemplo: si eres el numero 3 -> avances/03-interfaz.txt
+
+Abrelo y completa SOLO tu nombre, carnet y usuario de GitHub.
+Edita unicamente TU archivo: asi evitamos conflictos.
+
+
+PASO 6. SUBIR TU CAMBIO
+-----------------------------------------------------------------------
+  git add avances/NOMBRE-DE-TU-ARCHIVO.txt
+  git commit -m "Registro de mi nombre y datos"
+  git push -u origin avance/tunombre-registro
+
+En el primer push se abre una ventana del navegador para iniciar
+sesion en GitHub. Aceptala y regresa a la consola.
+
+
+PASO 7. ABRIR TU PULL REQUEST (PR)
+-----------------------------------------------------------------------
+En la pagina del repositorio en GitHub aparece un boton amarillo
+"Compare & pull request". Pulsalo, revisa el texto de la plantilla,
+y pulsa "Create pull request". Avisa al coordinador por el grupo.
+
+Ese primer PR es tu registro. Despues sigue tu orden de trabajo.
+
+
+QUE SIGUE
+-----------------------------------------------------------------------
+  - docs/ORDEN_DE_TRABAJO.md  -> en que orden se trabaja y que depende de que
+  - tu archivo de avances     -> tus tareas, y donde registras lo que haces
+  - CONTRIBUTING.md           -> las reglas de ramas y Pull Requests
+
+
+REGLAS DE ORO
+-----------------------------------------------------------------------
+  1. Nadie sube directo a "main".
+  2. Una tarea = una rama = un Pull Request.
+  3. Cada PR debe incluir la actualizacion de TU archivo de avances.
+  4. No subas el archivo .env ni contrasenas.
+  5. Si algo no te funciona, pregunta en el grupo con el mensaje de
+     error completo (copialo y pegalo, no una foto borrosa).
+  6. Todos deben poder explicar TODO el sistema en la defensa final.

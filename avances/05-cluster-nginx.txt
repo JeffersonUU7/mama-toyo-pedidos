@@ -1,0 +1,41 @@
+AVANCES - 05 CLUSTER DOCKER Y NGINX
+=======================================================================
+
+Nombre completo:
+Carnet:
+Usuario de GitHub:
+Area: Cluster Docker y Nginx
+
+(Completa tus datos. Este archivo es SOLO TUYO: nadie mas lo edita.)
+
+
+TAREAS (cambia [ ] por [x] cuando las termines)
+-----------------------------------------------------------------------
+[ ] Registro: instalar herramientas, clonar, probar npm run dev
+[ ] Registro: completar mis datos en este archivo y abrir mi primer PR
+[ ] Ronda 1: probar "docker compose up --build" y confirmar que los 3 servicios levantan
+[ ] Ronda 1: verificar el balanceo (el campo "node" alterna entre nodo-1 y nodo-2)
+[ ] Ronda 1: verificar el failover ("docker compose stop app1" y el sitio sigue respondiendo)
+[ ] Ronda 1: reportar o corregir errores en docker-compose.yml y nginx/nginx.conf
+[ ] Ronda 2: agregar el servicio de persistencia compartida en Compose
+[ ] Ronda 2: preparar y ensayar la demo de failover
+[ ] Ronda 3: ensayo de la defensa oral
+
+REGISTRO DE AVANCES
+-----------------------------------------------------------------------
+Agrega una entrada NUEVA al final por cada Pull Request.
+Copia el bloque de abajo, pegalo debajo y llenalo.
+
+>>> ENTRADA (copia desde aqui)
+Fecha:
+Que hice:
+Archivos que toque:
+Rama / numero de PR:
+Como lo probe:
+Bloqueos o dudas:
+<<< (hasta aqui)
+
+
+ENTRADAS
+-----------------------------------------------------------------------
+

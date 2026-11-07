@@ -1,0 +1,40 @@
+AVANCES - 04 SERVIDOR WEB Y HTTPS
+=======================================================================
+
+Nombre completo:
+Carnet:
+Usuario de GitHub:
+Area: Servidor web y HTTPS
+
+(Completa tus datos. Este archivo es SOLO TUYO: nadie mas lo edita.)
+
+
+TAREAS (cambia [ ] por [x] cuando las termines)
+-----------------------------------------------------------------------
+[ ] Registro: instalar herramientas, clonar, probar npm run dev
+[ ] Registro: completar mis datos en este archivo y abrir mi primer PR
+[ ] Ronda 1: decidir Apache o IIS y justificar la decision
+[ ] Ronda 1: instalarlo y hacer que sirva la carpeta web/
+[ ] Ronda 1: reenviar /menu, /pedidos, /cocina y /health al puerto 3000
+[ ] Ronda 1: documentar todo en docs/SERVIDOR_WEB.md
+[ ] Ronda 3: HTTPS en el balanceador Nginx (certificado autofirmado)
+[ ] Ronda 3: ensayo de la defensa oral
+
+REGISTRO DE AVANCES
+-----------------------------------------------------------------------
+Agrega una entrada NUEVA al final por cada Pull Request.
+Copia el bloque de abajo, pegalo debajo y llenalo.
+
+>>> ENTRADA (copia desde aqui)
+Fecha:
+Que hice:
+Archivos que toque:
+Rama / numero de PR:
+Como lo probe:
+Bloqueos o dudas:
+<<< (hasta aqui)
+
+
+ENTRADAS
+-----------------------------------------------------------------------
+

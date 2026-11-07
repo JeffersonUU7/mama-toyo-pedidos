@@ -1,7 +1,7 @@
 # Reparto de tareas
 
 Cada persona es **responsable principal** de un área, pero se ayudan entre sí.
-Las tareas se siguen como *Issues* en GitHub.
+El detalle de cada tarea y su registro de avances está en la carpeta `avances/` (un archivo por persona). El orden y las dependencias están en `docs/ORDEN_DE_TRABAJO.md`.
 
 ## Responsables
 

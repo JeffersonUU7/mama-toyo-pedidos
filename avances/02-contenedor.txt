@@ -1,0 +1,40 @@
+AVANCES - 02 CONTENEDOR EXPRESS/TYPESCRIPT
+=======================================================================
+
+Nombre completo:
+Carnet:
+Usuario de GitHub:
+Area: Contenedor Express/TypeScript
+
+(Completa tus datos. Este archivo es SOLO TUYO: nadie mas lo edita.)
+
+
+TAREAS (cambia [ ] por [x] cuando las termines)
+-----------------------------------------------------------------------
+[ ] Registro: instalar herramientas, clonar, probar npm run dev
+[ ] Registro: completar mis datos en este archivo y abrir mi primer PR
+[ ] Ronda 1: revisar la app (src/) y entender cada ruta
+[ ] Ronda 1: mejorar validaciones y manejo de errores
+[ ] Ronda 1: verificar que "docker build" construye la imagen sin errores
+[ ] Ronda 1: habilitar CORS solo para desarrollo
+[ ] Ronda 2: implementar la persistencia compartida de pedidos (segun decision del equipo)
+[ ] Ronda 3: ensayo de la defensa oral
+
+REGISTRO DE AVANCES
+-----------------------------------------------------------------------
+Agrega una entrada NUEVA al final por cada Pull Request.
+Copia el bloque de abajo, pegalo debajo y llenalo.
+
+>>> ENTRADA (copia desde aqui)
+Fecha:
+Que hice:
+Archivos que toque:
+Rama / numero de PR:
+Como lo probe:
+Bloqueos o dudas:
+<<< (hasta aqui)
+
+
+ENTRADAS
+-----------------------------------------------------------------------
+

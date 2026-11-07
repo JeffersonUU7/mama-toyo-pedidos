@@ -1,0 +1,40 @@
+AVANCES - 06 PRUEBAS DE CARGA Y MONITOREO
+=======================================================================
+
+Nombre completo:
+Carnet:
+Usuario de GitHub:
+Area: Pruebas de carga y monitoreo
+
+(Completa tus datos. Este archivo es SOLO TUYO: nadie mas lo edita.)
+
+
+TAREAS (cambia [ ] por [x] cuando las termines)
+-----------------------------------------------------------------------
+[ ] Registro: instalar herramientas, clonar, probar npm run dev
+[ ] Registro: completar mis datos en este archivo y abrir mi primer PR
+[ ] Ronda 1: elegir la herramienta de pruebas de carga y justificar la eleccion
+[ ] Ronda 1: escribir el plan de pruebas en docs/PRUEBAS_DE_CARGA.md
+[ ] Ronda 2: correr las primeras pruebas de carga y guardar los resultados
+[ ] Ronda 3: aplicar seguridad y monitoreo (temas de la Clase 37)
+[ ] Ronda 3: validar el dimensionamiento (demanda pico 300, capacidad por nodo 400) con pruebas reales
+[ ] Ronda 3: ensayo de la defensa oral
+
+REGISTRO DE AVANCES
+-----------------------------------------------------------------------
+Agrega una entrada NUEVA al final por cada Pull Request.
+Copia el bloque de abajo, pegalo debajo y llenalo.
+
+>>> ENTRADA (copia desde aqui)
+Fecha:
+Que hice:
+Archivos que toque:
+Rama / numero de PR:
+Como lo probe:
+Bloqueos o dudas:
+<<< (hasta aqui)
+
+
+ENTRADAS
+-----------------------------------------------------------------------
+
