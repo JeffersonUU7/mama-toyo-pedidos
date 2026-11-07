@@ -2,7 +2,7 @@ AVANCES - 01 COORDINACION Y DOCUMENTACION
 =======================================================================
 
 Nombre completo: Jefferson Requeno
-Carnet:
+Carnet: U20250779
 Usuario de GitHub: JeffersonUU7
 Area: Coordinacion y documentacion
 
