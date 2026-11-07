@@ -1,9 +1,9 @@
 AVANCES - 04 SERVIDOR WEB Y HTTPS
 =======================================================================
 
-Nombre completo: Josue Zelaya
-Carnet:
-Usuario de GitHub:
+Nombre completo: Josue Alexander Zelaya Rodriguez
+Carnet: u20251084
+Usuario de GitHub: POCHO955
 Area: Servidor web y HTTPS
 
 (Completa tus datos. Este archivo es SOLO TUYO: nadie mas lo edita.)
@@ -11,12 +11,12 @@ Area: Servidor web y HTTPS
 
 TAREAS (cambia [ ] por [x] cuando las termines)
 -----------------------------------------------------------------------
-[ ] Registro: instalar herramientas, clonar, probar npm run dev
+[X] Registro: instalar herramientas, clonar, probar npm run dev
 [ ] Registro: completar mis datos en este archivo y abrir mi primer PR
-[ ] Ronda 1: decidir Apache o IIS y justificar la decision
-[ ] Ronda 1: instalarlo y hacer que sirva la carpeta web/
-[ ] Ronda 1: reenviar /menu, /pedidos, /cocina y /health al puerto 3000
-[ ] Ronda 1: documentar todo en docs/SERVIDOR_WEB.md
+[x] Ronda 1: decidir Apache o IIS y justificar la decision
+[x] Ronda 1: instalarlo y hacer que sirva la carpeta web/
+[x] Ronda 1: reenviar /menu, /pedidos, /cocina y /health al puerto 3000
+[x] Ronda 1: documentar todo en docs/SERVIDOR_WEB.md
 [ ] Ronda 3: HTTPS en el balanceador Nginx (certificado autofirmado)
 [ ] Ronda 3: ensayo de la defensa oral
 
@@ -37,4 +37,9 @@ Bloqueos o dudas:
 
 ENTRADAS
 -----------------------------------------------------------------------
-
+Fecha: 07/11/2026
+Que hice: Elegi Apache (justificado en docs/SERVIDOR_WEB.md), configure el proxy a :3000, la redireccion a HTTPS y el certificado autofirmado (CA:FALSE). Documente la decision, el uso y las pruebas.
+Archivos que toque: apache/httpd.conf, apache/docker-compose.apache.yml, certs/generar-certificado.sh, docs/SERVIDOR_WEB.md, .gitignore
+Rama / numero de PR: avance/josue-servidor-apache / #(completar al abrir el PR)
+Como lo probe: en el navegador, https://localhost:8443/health y /menu responden por HTTPS; Apache sirvio un index.html de prueba en web/ (ya eliminado); http://localhost:8081 redirige a HTTPS.
+Bloqueos o dudas: falta la interfaz real en web/ (Yessica). Pendiente 3: Apache delante del balanceador Nginx?

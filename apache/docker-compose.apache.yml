@@ -1,0 +1,18 @@
+# Servidor web Apache (Unidad 2). Se levanta aparte del cluster para no tocar docker-compose.yml:
+#   1) bash certs/generar-certificado.sh
+#   2) npm run dev                      (la app en el puerto 3000)
+#   3) docker compose -f apache/docker-compose.apache.yml up
+# Entrar por https://localhost:8443  (el navegador avisara del certificado autofirmado: es normal)
+services:
+  apache:
+    image: httpd:2.4-alpine
+    ports:
+      - "8081:80"
+      - "8443:443"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # para que funcione tambien en Linux
+    volumes:
+      - ./httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+      - ../web:/usr/local/apache2/htdocs:ro
+      - ../certs:/usr/local/apache2/conf/certs:ro
+    restart: unless-stopped
