@@ -6,18 +6,18 @@ Carnet: U20250779
 Usuario de GitHub: JeffersonUU7
 Area: Coordinacion y documentacion
 
-(Completa tus datos. Este archivo es SOLO TUYO: nadie mas lo edita.)
+
 
 
 TAREAS (cambia [ ] por [x] cuando las termines)
 -----------------------------------------------------------------------
-[ ] Registro: instalar herramientas, clonar, probar npm run dev
-[ ] Registro: completar mis datos en este archivo y abrir mi primer PR
-[ ] Crear el repositorio y subir la base del proyecto
-[ ] Invitar a los 5 integrantes y asignar numeros/areas
-[ ] Llenar la tabla del equipo en README.md y docs/REPARTO.md
-[ ] Ronda 1: diagrama de arquitectura detallado en docs/
-[ ] Ronda 1: README completo con pasos para correr el proyecto
+[x ] Registro: instalar herramientas, clonar, probar npm run dev
+[x ] Registro: completar mis datos en este archivo y abrir mi primer PR
+[x ] Crear el repositorio y subir la base del proyecto
+[x ] Invitar a los 5 integrantes y asignar numeros/areas
+[x ] Llenar la tabla del equipo en README.md y docs/REPARTO.md
+[x] Ronda 1: diagrama de arquitectura detallado en docs/
+[x] Ronda 1: README completo con pasos para correr el proyecto
 [ ] Revisar y aprobar los Pull Requests de la Ronda 1
 [ ] Ronda 2: guion de la demo (que se muestra y quien lo muestra)
 [ ] Ronda 3: documentacion final y diagrama actualizado
