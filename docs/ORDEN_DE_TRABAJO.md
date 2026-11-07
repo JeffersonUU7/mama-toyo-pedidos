@@ -14,12 +14,12 @@ y abrir un PR con sus datos en su archivo de `avances/`.
 
 | N.º | Área | Qué hacer | Archivos donde trabaja |
 |---|---|---|---|
-| 1 | Coordinación | Diagrama de arquitectura detallado. Completar README. Revisar y aprobar PRs. | `docs/`, `README.md` |
-| 2 | Contenedor | Revisar la app, mejorar validaciones y errores, verificar `docker build`. Habilitar CORS solo para desarrollo, para que la interfaz pueda consultar la API. | `src/`, `Dockerfile` |
-| 3 | Interfaz | Página estática con el menú del día y el formulario de pedido, que consuma `/menu` y `/pedidos`. | `web/` (carpeta nueva) |
-| 4 | Servidor web | Decidir Apache o IIS, instalarlo, que sirva `web/` y reenvíe `/menu`, `/pedidos`, `/cocina` y `/health` al puerto 3000. Documentarlo. | `docs/SERVIDOR_WEB.md` y su configuración |
-| 5 | Clúster | Probar `docker compose up --build`. Verificar el balanceo (el campo `node` alterna) y el failover (`docker compose stop app1`). Reportar y corregir errores. | `docker-compose.yml`, `nginx/` |
-| 6 | Pruebas | Elegir herramienta de pruebas de carga (k6, autocannon, JMeter u otra). Escribir el plan de pruebas. | `docs/PRUEBAS_DE_CARGA.md` |
+| 1 | Coordinación (Jefferson) | Diagrama de arquitectura detallado. Completar README. Revisar y aprobar PRs. | `docs/`, `README.md` |
+| 2 | Contenedor (Brissvey) | Revisar la app, mejorar validaciones y errores, verificar `docker build`. Habilitar CORS solo para desarrollo, para que la interfaz pueda consultar la API. | `src/`, `Dockerfile` |
+| 3 | Interfaz (Yessica) | Página estática con el menú del día y el formulario de pedido, que consuma `/menu` y `/pedidos`. | `web/` (carpeta nueva) |
+| 4 | Servidor web (Josue) | Decidir Apache o IIS, instalarlo, que sirva `web/` y reenvíe `/menu`, `/pedidos`, `/cocina` y `/health` al puerto 3000. Documentarlo. | `docs/SERVIDOR_WEB.md` y su configuración |
+| 5 | Clúster (Juan) | Probar `docker compose up --build`. Verificar el balanceo (el campo `node` alterna) y el failover (`docker compose stop app1`). Reportar y corregir errores. | `docker-compose.yml`, `nginx/` |
+| 6 | Pruebas (Randal) | Elegir herramienta de pruebas de carga (k6, autocannon, JMeter u otra). Escribir el plan de pruebas. | `docs/PRUEBAS_DE_CARGA.md` |
 
 **Terminada cuando:** el contenedor y el servidor web están configurados y documentados (Entrega Clase 33).
 

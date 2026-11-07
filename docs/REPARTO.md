@@ -7,12 +7,12 @@ El detalle de cada tarea y su registro de avances está en la carpeta `avances/`
 
 | N.º | Área | Responsable |
 |---|---|---|
-| 1 | Coordinación y documentación | |
-| 2 | Contenedor Express/TypeScript | |
-| 3 | Interfaz de menú y pedidos | |
-| 4 | Servidor web y HTTPS | |
-| 5 | Clúster Docker y Nginx | |
-| 6 | Pruebas de carga y monitoreo | |
+| 1 | Coordinación y documentación | Jefferson Requeno |
+| 2 | Contenedor Express/TypeScript | Brissvey Calderon |
+| 3 | Interfaz de menú y pedidos | Yessica Medrano |
+| 4 | Servidor web y HTTPS | Josue Zelaya |
+| 5 | Clúster Docker y Nginx | Juan Flores |
+| 6 | Pruebas de carga y monitoreo | Randal Lopez |
 
 ## Entrega 2 – Clase 33 (20 %): arquitectura + repositorio con contenedor y servidor configurados
 

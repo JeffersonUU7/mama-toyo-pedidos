@@ -44,10 +44,10 @@ PASO 2. DESCARGAR EL PROYECTO (clonar)
 -----------------------------------------------------------------------
 En Git Bash (abierto en cualquier lugar):
   cd ~/Documents
-  git clone URL-DEL-REPOSITORIO
+  git clone https://github.com/JeffersonUU7/mama-toyo-pedidos.git
   cd mama-toyo-pedidos
 
-La URL esta en el boton verde "Code" del repositorio en GitHub.
+(Es un repositorio privado: solo lo ves si aceptaste la invitacion.)
 
 
 PASO 3. COMPROBAR QUE FUNCIONA
@@ -69,10 +69,14 @@ Nunca trabajes en "main". Crea tu rama:
 PASO 5. COMPLETAR TU ARCHIVO DE AVANCES
 -----------------------------------------------------------------------
 En la carpeta "avances" hay un archivo .txt por area.
-Tu archivo es el que corresponde a TU NUMERO en la tabla del equipo
-(el coordinador te dira cual es).
+Tu archivo es el que tiene tu nombre:
 
-Ejemplo: si eres el numero 3 -> avances/03-interfaz.txt
+  1. Jefferson Requeno    -> avances/01-coordinacion.txt
+  2. Brissvey Calderon    -> avances/02-contenedor.txt
+  3. Yessica Medrano      -> avances/03-interfaz.txt
+  4. Josue Zelaya         -> avances/04-servidor-https.txt
+  5. Juan Flores          -> avances/05-cluster-nginx.txt
+  6. Randal Lopez         -> avances/06-pruebas-monitoreo.txt
 
 Abrelo y completa SOLO tu nombre, carnet y usuario de GitHub.
 Edita unicamente TU archivo: asi evitamos conflictos.
@@ -100,6 +104,7 @@ Ese primer PR es tu registro. Despues sigue tu orden de trabajo.
 QUE SIGUE
 -----------------------------------------------------------------------
   - docs/ORDEN_DE_TRABAJO.md  -> en que orden se trabaja y que depende de que
+  - docs/CONTEXTO_DEL_PROYECTO.txt -> resumen de todo el proyecto en un solo lugar
   - tu archivo de avances     -> tus tareas, y donde registras lo que haces
   - CONTRIBUTING.md           -> las reglas de ramas y Pull Requests
 

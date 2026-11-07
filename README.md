@@ -11,12 +11,12 @@ desplegado como clúster con balanceo de carga para mantenerse disponible en la 
 
 | N.º | Nombre | Usuario de GitHub | Responsabilidad principal |
 |---|---|---|---|
-| 1 | | | Coordinación y documentación |
-| 2 | | | Contenedor Express/TypeScript |
-| 3 | | | Interfaz de menú y pedidos |
-| 4 | | | Servidor web y HTTPS |
-| 5 | | | Clúster Docker y Nginx |
-| 6 | | | Pruebas de carga y monitoreo |
+| 1 | Jefferson Requeno | JeffersonUU7 | Coordinación y documentación |
+| 2 | Brissvey Calderon |  | Contenedor Express/TypeScript |
+| 3 | Yessica Medrano |  | Interfaz de menú y pedidos |
+| 4 | Josue Zelaya |  | Servidor web y HTTPS |
+| 5 | Juan Flores |  | Clúster Docker y Nginx |
+| 6 | Randal Lopez |  | Pruebas de carga y monitoreo |
 
 ## Arquitectura
 

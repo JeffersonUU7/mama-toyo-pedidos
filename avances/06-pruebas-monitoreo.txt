@@ -1,7 +1,7 @@
 AVANCES - 06 PRUEBAS DE CARGA Y MONITOREO
 =======================================================================
 
-Nombre completo:
+Nombre completo: Randal Lopez
 Carnet:
 Usuario de GitHub:
 Area: Pruebas de carga y monitoreo

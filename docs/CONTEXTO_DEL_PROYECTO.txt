@@ -1,0 +1,127 @@
+=======================================================================
+CONTEXTO DEL PROYECTO
+Mama Toyo - Pedidos para llevar y menu del dia
+=======================================================================
+Materia: Gestion de Servidores Web, Seccion A, Laboratorio 3 (UNIVO)
+Repositorio: https://github.com/JeffersonUU7/mama-toyo-pedidos
+
+Este documento resume todo el proyecto en un solo lugar, para que
+cualquier integrante del equipo sepa de que trata, como esta armado y
+que le toca hacer.
+
+
+-----------------------------------------------------------------------
+DE QUE TRATA
+-----------------------------------------------------------------------
+Sistema web de pedidos para llevar y menu del dia para el Comedor
+Mama Toyo (San Miguel, El Salvador). El local es pequeno y en el
+almuerzo se forman filas. El sitio permite ver el menu, pedir con
+anticipacion y le da a la cocina una lista de pedidos pendientes.
+
+Los platos y precios son DATOS DE EJEMPLO para la demostracion.
+El proyecto corre en local con Docker; no se publica en internet.
+
+Objetivo tecnico: integrar las tres unidades del curso en un solo sistema:
+  - Unidades 1 y 2: contenedor web Express/TypeScript + servidor web
+    (Apache o IIS) con HTTPS (certificado autofirmado en local).
+  - Unidad 3: cluster activo-activo de al menos 2 nodos en Docker
+    Compose, con health check y balanceador Nginx (con HTTPS).
+
+
+-----------------------------------------------------------------------
+ARQUITECTURA
+-----------------------------------------------------------------------
+  Cliente --HTTPS--> Nginx (balanceador) --> Nodo 1 (Express) /health
+                                         \-> Nodo 2 (Express) /health
+
+
+-----------------------------------------------------------------------
+RUTAS DE LA APLICACION (src/app.ts)
+-----------------------------------------------------------------------
+  GET  /health            200 si el nodo funciona (lo usa el balanceador)
+  GET  /menu              platos del dia con precio
+  POST /pedidos           crea un pedido {cliente, items:[{platoId,cantidad}]}
+  GET  /pedidos/:numero   consulta un pedido
+  GET  /cocina            pedidos pendientes en orden de llegada
+
+Cada respuesta incluye el campo "node" (que nodo la atendio).
+
+
+-----------------------------------------------------------------------
+ESTRUCTURA DEL REPOSITORIO
+-----------------------------------------------------------------------
+  src/                 codigo Express/TypeScript (app.ts, server.ts,
+                       data.ts, pedidos.ts)
+  nginx/nginx.conf     configuracion del balanceador
+  Dockerfile           imagen de cada nodo
+  docker-compose.yml   cluster: app1 + app2 + nginx (puerto 8080)
+  avances/             un .txt por integrante para registrar su avance
+  docs/                reparto, orden de trabajo, decisiones, contexto
+  LEEME_PRIMERO.txt    guia de inicio del equipo
+
+
+-----------------------------------------------------------------------
+COMO CORRERLO
+-----------------------------------------------------------------------
+  Sin Docker:    npm install   y luego   npm run dev   (puerto 3000)
+  Con cluster:   docker compose up --build   (entrar por el puerto 8080)
+  Simular falla: docker compose stop app1
+
+Tecnologias: Node.js 20, Express, TypeScript (strict), Docker y Docker
+Compose, Nginx, Git y GitHub.
+
+
+-----------------------------------------------------------------------
+EL EQUIPO Y LAS AREAS
+-----------------------------------------------------------------------
+  1. Jefferson Requeno  - Coordinacion y documentacion
+  2. Brissvey Calderon  - Contenedor Express/TypeScript
+  3. Yessica Medrano    - Interfaz de menu y pedidos (carpeta web/)
+  4. Josue Zelaya       - Servidor web (Apache o IIS) y HTTPS
+  5. Juan Flores        - Cluster Docker y Nginx
+  6. Randal Lopez       - Pruebas de carga y monitoreo
+
+Las tareas de cada quien estan en su archivo de avances/ y el orden de
+trabajo en docs/ORDEN_DE_TRABAJO.md.
+
+
+-----------------------------------------------------------------------
+REGLAS DE TRABAJO EN GIT
+-----------------------------------------------------------------------
+  - Nadie sube directo a la rama main.
+  - Una tarea = una rama (avance/nombre-tarea) = un Pull Request.
+  - El coordinador revisa y aprueba todos los Pull Requests.
+  - Cada PR actualiza el archivo propio dentro de avances/ (solo el tuyo).
+  - Commits pequenos y en espanol.
+  - Nunca subir el archivo .env ni contrasenas.
+
+
+-----------------------------------------------------------------------
+DECISIONES PENDIENTES (se resuelven entre todos)
+-----------------------------------------------------------------------
+  1. Persistencia de pedidos: hoy los pedidos viven en la MEMORIA de cada
+     nodo. En un cluster, un pedido creado en el nodo 1 no existe en el
+     nodo 2. Hay que decidir como compartir el estado (base de datos en
+     Docker Compose, Redis, etc.).
+  2. HTTPS en el balanceador Nginx (se hace en la ultima ronda).
+  3. Si el servidor web (Apache o IIS) va dentro de cada nodo o delante
+     del balanceador.
+  4. Health check: Nginx usa check pasivo; el check a nivel de URL
+     (/health) lo hace el HEALTHCHECK de Docker.
+
+
+-----------------------------------------------------------------------
+DIMENSIONAMIENTO ACTUAL (por validar con pruebas de carga)
+-----------------------------------------------------------------------
+  Demanda pico 300 usuarios simultaneos, capacidad por nodo 400,
+  factor de seguridad 1.5 => 2 nodos.
+  Meta de disponibilidad: 99.9 %.
+
+
+-----------------------------------------------------------------------
+ENTREGAS
+-----------------------------------------------------------------------
+  Clase 29  Propuesta de equipo y tema                      10 %
+  Clase 33  Arquitectura y repositorio (contenedor+servidor) 20 %
+  Clase 36  Demo del cluster con balanceo funcionando        20 %
+  Clase 39  Entrega final y defensa                          50 %

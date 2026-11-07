@@ -1,7 +1,7 @@
 AVANCES - 05 CLUSTER DOCKER Y NGINX
 =======================================================================
 
-Nombre completo:
+Nombre completo: Juan Flores
 Carnet:
 Usuario de GitHub:
 Area: Cluster Docker y Nginx
