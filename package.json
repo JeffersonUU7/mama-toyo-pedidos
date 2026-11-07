@@ -1,0 +1,22 @@
+{
+  "name": "mama-toyo-pedidos",
+  "version": "0.1.0",
+  "description": "Sistema de pedidos para llevar y menú del día – Comedor Mamá Toyo (Proyecto de Cátedra, Laboratorio 3)",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "express": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

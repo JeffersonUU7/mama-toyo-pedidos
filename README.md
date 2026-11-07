@@ -1,0 +1,91 @@
+# Mamá Toyo – Pedidos para llevar y menú del día
+
+Proyecto de Cátedra · Gestión de Servidores Web · Sección A · Laboratorio 3 · UNIVO
+
+Sistema web de pedidos para llevar y menú del día para el Comedor Mamá Toyo (San Miguel),
+desplegado como clúster con balanceo de carga para mantenerse disponible en la hora pico del almuerzo.
+
+> Los platos y precios del sistema son **datos de ejemplo** para la demostración.
+
+## Equipo
+
+| N.º | Nombre | Usuario de GitHub | Responsabilidad principal |
+|---|---|---|---|
+| 1 | | | Coordinación y documentación |
+| 2 | | | Contenedor Express/TypeScript |
+| 3 | | | Interfaz de menú y pedidos |
+| 4 | | | Servidor web y HTTPS |
+| 5 | | | Clúster Docker y Nginx |
+| 6 | | | Pruebas de carga y monitoreo |
+
+## Arquitectura
+
+```
+Cliente --HTTPS--> Nginx (balanceador) --> Nodo 1 (Express)  /health
+                                       \-> Nodo 2 (Express)  /health
+```
+
+## Rutas de la aplicación
+
+| Ruta | Método | Función |
+|---|---|---|
+| `/health` | GET | Responde 200 si el nodo funciona (lo usa el balanceador) |
+| `/menu` | GET | Platos del día con su precio |
+| `/pedidos` | POST | Crea un pedido y devuelve su número |
+| `/pedidos/:numero` | GET | Consulta un pedido |
+| `/cocina` | GET | Pedidos pendientes, en orden de llegada |
+
+Cada respuesta incluye el campo `node`, que indica qué nodo atendió la petición.
+
+## Cómo correrlo
+
+### Opción A: solo la app (sin Docker)
+
+```bash
+npm install
+cp .env.example .env     # en Windows: copy .env.example .env
+npm run dev
+```
+
+Prueba: <http://localhost:3000/health>
+
+### Opción B: clúster completo con Docker Compose
+
+```bash
+docker compose up --build
+```
+
+Prueba: <http://localhost:8080/menu>. Recarga varias veces y mira cómo cambia `node`
+entre `nodo-1` y `nodo-2`. Para simular una falla: `docker compose stop app1` y vuelve a probar.
+
+## Ejemplo de pedido
+
+```bash
+curl -X POST http://localhost:8080/pedidos \
+  -H "Content-Type: application/json" \
+  -d '{"cliente":"Ana","items":[{"platoId":1,"cantidad":2},{"platoId":5,"cantidad":2}]}'
+```
+
+## Estructura del repositorio
+
+```
+src/            Código de la app (Express/TypeScript)
+nginx/          Configuración del balanceador
+docs/           Reparto de tareas, decisiones y documentación
+Dockerfile      Imagen de cada nodo
+docker-compose.yml   Clúster: 2 nodos + Nginx
+```
+
+## Cómo trabajamos
+
+Lee [CONTRIBUTING.md](CONTRIBUTING.md) antes de tu primer cambio.
+Las tareas por persona y por entrega están en [docs/REPARTO.md](docs/REPARTO.md).
+
+## Entregas
+
+| Entrega | Contenido | Peso |
+|---|---|---|
+| Clase 29 | Propuesta de equipo y tema | 10 % |
+| Clase 33 | Arquitectura y repositorio: contenedor y servidor configurados | 20 % |
+| Clase 36 | Demo del clúster con balanceo de carga funcionando | 20 % |
+| Clase 39 | Entrega final y defensa | 50 % |
