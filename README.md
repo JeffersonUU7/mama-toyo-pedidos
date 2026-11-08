@@ -5,7 +5,7 @@ Proyecto de Cátedra · Gestión de Servidores Web · Sección A · Laboratorio 
 Sistema web de pedidos para llevar y menú del día para el Comedor Mamá Toyo (San Miguel),
 desplegado como clúster con balanceo de carga para mantenerse disponible en la hora pico del almuerzo.
 
-> Los platos y precios del sistema son **datos de ejemplo** para la demostración.
+> El menú del sistema es el del Comedor Mamá Toyo (ver [docs/MENU.md](docs/MENU.md)). Los precios del menú son referenciales y se manejan como rangos.
 
 ## Equipo
 
