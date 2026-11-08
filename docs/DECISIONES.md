@@ -31,6 +31,19 @@ Decidir si el servidor web de la Unidad 2 va dentro de cada nodo o delante del b
 Hoy Nginx usa health check **pasivo** (saca un nodo tras 2 fallos). El check a nivel de URL
 (`/health`) lo ejecuta Docker (`HEALTHCHECK` del Dockerfile). Evaluar cómo mostrarlo en la demo.
 
+## Pendiente 5: precios en rangos
+
+El menú real (`docs/MENU.md`) tiene precios en **rangos** (por ejemplo, pollo frito de $3.50 a $4.50), pero
+la app guarda **un solo precio** por plato y calcula el total del pedido con él. Hay que decidir cómo se maneja:
+
+| Opción | Ventaja | Costo |
+|---|---|---|
+| Guardar `precioMin` y `precioMax` y mostrar el total como rango | Fiel al menú real | Cambia `src/data.ts`, `src/pedidos.ts` y la interfaz |
+| Un precio fijo por plato (por ejemplo, el mínimo o un punto medio acordado) | Simple, no cambia la lógica | El total es aproximado |
+| Dividir en variantes con precio fijo (porción pequeña, porción grande) | Cada variante tiene su precio | Hay que definir las variantes con el comedor |
+
+Decide el equipo (área 2 implementa) antes de la Clase 33.
+
 ## Decisiones registradas
 
 - Clúster activo-activo con balanceo de carga, 2 nodos mínimo.

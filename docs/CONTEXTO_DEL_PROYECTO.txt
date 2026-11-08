@@ -18,7 +18,8 @@ Mama Toyo (San Miguel, El Salvador). El local es pequeno y en el
 almuerzo se forman filas. El sitio permite ver el menu, pedir con
 anticipacion y le da a la cocina una lista de pedidos pendientes.
 
-Los platos y precios son DATOS DE EJEMPLO para la demostracion.
+El menu es el del Comedor Mama Toyo (ver docs/MENU.md). Los precios son
+referenciales y vienen en rangos.
 El proyecto corre en local con Docker; no se publica en internet.
 
 Objetivo tecnico: integrar las tres unidades del curso en un solo sistema:

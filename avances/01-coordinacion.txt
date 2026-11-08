@@ -6,22 +6,23 @@ Carnet: U20250779
 Usuario de GitHub: JeffersonUU7
 Area: Coordinacion y documentacion
 
-
+(Completa tus datos. Este archivo es SOLO TUYO: nadie mas lo edita.)
 
 
 TAREAS (cambia [ ] por [x] cuando las termines)
 -----------------------------------------------------------------------
-[x ] Registro: instalar herramientas, clonar, probar npm run dev
-[x ] Registro: completar mis datos en este archivo y abrir mi primer PR
-[x ] Crear el repositorio y subir la base del proyecto
-[x ] Invitar a los 5 integrantes y asignar numeros/areas
-[x ] Llenar la tabla del equipo en README.md y docs/REPARTO.md
-[x] Ronda 1: diagrama de arquitectura detallado en docs/
+[x] Registro: instalar herramientas, clonar, probar npm run dev
+[x] Registro: completar mis datos en este archivo y abrir mi primer PR
+[x] Crear el repositorio y subir la base del proyecto
+[x] Invitar a los 5 integrantes y asignar numeros/areas
+[x] Llenar la tabla del equipo en README.md y docs/REPARTO.md
+[ ] Ronda 1: diagrama de arquitectura detallado en docs/
 [x] Ronda 1: README completo con pasos para correr el proyecto
 [ ] Revisar y aprobar los Pull Requests de la Ronda 1
 [ ] Ronda 2: guion de la demo (que se muestra y quien lo muestra)
 [ ] Ronda 3: documentacion final y diagrama actualizado
 [ ] Ronda 3: ensayo de la defensa oral
+
 
 REGISTRO DE AVANCES
 -----------------------------------------------------------------------
@@ -41,3 +42,30 @@ Bloqueos o dudas:
 ENTRADAS
 -----------------------------------------------------------------------
 
+Fecha: 06/11/2026
+Que hice: Cree el repositorio en GitHub y subi la base del proyecto
+  (app Express/TypeScript, Docker Compose con 2 nodos y Nginx, y la
+  documentacion). Asigne las areas del equipo y complete la tabla en
+  README.md y docs/REPARTO.md. Prepare la guia de inicio
+  (LEEME_PRIMERO.txt), el orden de trabajo y los archivos de avances.
+Archivos que toque: README.md, LEEME_PRIMERO.txt, CONTRIBUTING.md,
+  docs/, avances/
+Rama / numero de PR: main (base inicial)
+Como lo probe: Corri npm run dev y abri http://localhost:3000/health
+Bloqueos o dudas: Ninguno por ahora.
+
+Fecha: 07/11/2026
+Que hice: Revise y aprobe los PR #1 (Apache con HTTPS y certificado
+  autofirmado) y #2 (documentacion del servidor web) de Josue, y los
+  integre a main. Documente el menu real del comedor en docs/MENU.md,
+  quite la nota de "datos de ejemplo" y registre en docs/DECISIONES.md el
+  pendiente de los precios en rangos. Agregue la regla de saltos de linea
+  para los scripts .sh en .gitattributes.
+Archivos que toque: README.md, src/data.ts, .gitattributes, docs/MENU.md,
+  docs/DECISIONES.md, docs/ORDEN_DE_TRABAJO.md,
+  docs/CONTEXTO_DEL_PROYECTO.txt, avances/01-coordinacion.txt
+Rama / numero de PR: avance/jefferson-menu-y-avances (PR hacia main)
+Como lo probe: Revise el contenido de cada PR antes del merge y confirme
+  que main quedo con apache/, certs/ y docs/SERVIDOR_WEB.md
+Bloqueos o dudas: Falta decidir como se manejan los precios en rangos
+  (docs/DECISIONES.md, Pendiente 5)

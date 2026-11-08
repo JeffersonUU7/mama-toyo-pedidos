@@ -1,4 +1,5 @@
-// DATOS DE EJEMPLO para la demostración. No son el menú ni los precios reales del comedor.
+// PENDIENTE (área 2): reemplazar estos platos provisionales por el menú real de docs/MENU.md.
+// Los precios reales vienen en rangos: ver docs/DECISIONES.md, Pendiente 5.
 export interface Plato {
   id: number;
   nombre: string;
