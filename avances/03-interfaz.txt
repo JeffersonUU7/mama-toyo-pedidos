@@ -5,9 +5,9 @@ Carnet: u20250049
 Usuario de GitHub: milethmdr
 Area: Interfaz de menu y pedidos
 
-TAREAS (cambia [ ] por [x] cuando las vayas terminandoo)
+TAREAS (cambia [ ] por [x] cuando las vayas terminando)
 -----------------------------------------------------------------------
-[ ] Registro: instalar herramientas, clonar, probar npm run dev
+[x] Registro: instalar herramientas, clonar, probar npm run dev
 [x] Registro: completar mis datos en este archivo y abrir mi primer PR
 [x] Ronda 1: crear la carpeta web/ con la pagina del menu del dia (consume /menu)
 [x] Ronda 1: formulario de pedido (envia a /pedidos y muestra el numero de confirmacion)
@@ -52,7 +52,8 @@ Rama / numero de PR: avance/yessica-interfaz-web / PR #4
 Como lo probe: Con un servidor simulado de la API (en dos modos: precio fijo y rangos) y un navegador
   automatizado: elegir platos, enviar pedido, ver el numero, consultar el pedido, ver la cocina, pedido
   inexistente (404), API caida (mensaje + boton Reintentar), pantalla de celular sin scroll horizontal.
-  Falta probarla contra la API real (npm run dev) y detras de Apache/Nginx.
+  Tambien la probe con la API real (npm run dev, en el puerto 3001 porque el 3000 estaba ocupado en mi PC):
+  ver menu, enviar pedido, ver la cocina y consultar el pedido funcionaron. Falta probarla detras de Apache/Nginx.
 Bloqueos o dudas: (1) Brissvey: cuando cambies data.ts a rangos, usa precioMin/precioMax en cada plato y
   totalMin/totalMax en el pedido; la interfaz ya los entiende. (2) Josue: Apache debe servir web/ como raiz
   (index.html) y reenviar /menu, /pedidos, /cocina. (3) /cocina no tiene forma de marcar un pedido como
