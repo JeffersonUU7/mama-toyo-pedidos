@@ -1,21 +1,17 @@
 AVANCES - 03 INTERFAZ DE MENU Y PEDIDOS
-=======================================================================
 
-Nombre completo: Yessica Medrano
-Carnet:
-Usuario de GitHub:
+Nombre: Yessica Medrano
+Carnet: u20250049
+Usuario de GitHub: milethmdr
 Area: Interfaz de menu y pedidos
 
-(Completa tus datos. Este archivo es SOLO TUYO: nadie mas lo edita.)
-
-
-TAREAS (cambia [ ] por [x] cuando las termines)
+TAREAS (cambia [ ] por [x] cuando las vayas terminando)
 -----------------------------------------------------------------------
-[ ] Registro: instalar herramientas, clonar, probar npm run dev
-[ ] Registro: completar mis datos en este archivo y abrir mi primer PR
-[ ] Ronda 1: crear la carpeta web/ con la pagina del menu del dia (consume /menu)
-[ ] Ronda 1: formulario de pedido (envia a /pedidos y muestra el numero de confirmacion)
-[ ] Ronda 1: vista de cocina con pedidos pendientes (consume /cocina)
+[x] Registro: instalar herramientas, clonar, probar npm run dev
+[x] Registro: completar mis datos en este archivo y abrir mi primer PR
+[x] Ronda 1: crear la carpeta web/ con la pagina del menu del dia (consume /menu)
+[x] Ronda 1: formulario de pedido (envia a /pedidos y muestra el numero de confirmacion)
+[x] Ronda 1: vista de cocina con pedidos pendientes (consume /cocina)
 [ ] Ronda 2: conectar la interfaz al balanceador (puerto 8080)
 [ ] Ronda 3: ensayo de la defensa oral
 
@@ -24,7 +20,7 @@ REGISTRO DE AVANCES
 Agrega una entrada NUEVA al final por cada Pull Request.
 Copia el bloque de abajo, pegalo debajo y llenalo.
 
->>> ENTRADA (copia desde aqui)
+>>> ENTRADA 
 Fecha:
 Que hice:
 Archivos que toque:
@@ -37,3 +33,29 @@ Bloqueos o dudas:
 ENTRADAS
 -----------------------------------------------------------------------
 
+>>> ENTRADA
+Fecha: 2026-11-08
+Que hice: Cree la carpeta web/ con la interfaz en HTML, CSS y JavaScript puro (sin librerias).
+  - index.html + app.js: menu del dia (GET /menu) con botones +/- por plato, resumen del pedido con total,
+    formulario con el nombre del cliente (POST /pedidos) que muestra el numero de pedido, y consulta de un
+    pedido por numero (GET /pedidos/:numero).
+  - cocina.html + cocina.js: pedidos pendientes en orden de llegada (GET /cocina), se refresca cada 5s.
+  - common.js: funciones compartidas. Los precios se muestran como rango si el plato trae precioMin/precioMax
+    (menu real, Pendiente 5 de DECISIONES.md) o como un solo precio si trae "precio" (como esta hoy).
+    Igual con el total del pedido (total, o totalMin/totalMax).
+  - Las rutas son relativas (/menu, /pedidos, /cocina): funciona detras de Apache o de Nginx (:8080) sin CORS.
+    Para probar desde otro puerto: abrir la pagina con ?api=http://localhost:3000
+  - Muestra el campo "node" de la respuesta al pie de la pagina (sirve para la demo del balanceo).
+Archivos que toque: web/index.html, web/cocina.html, web/styles.css, web/common.js, web/app.js, web/cocina.js,
+  avances/03-interfaz.txt
+Rama / numero de PR: avance/yessica-interfaz-web / PR #4
+Como lo probe: Con un servidor simulado de la API (en dos modos: precio fijo y rangos) y un navegador
+  automatizado: elegir platos, enviar pedido, ver el numero, consultar el pedido, ver la cocina, pedido
+  inexistente (404), API caida (mensaje + boton Reintentar), pantalla de celular sin scroll horizontal.
+  Tambien la probe con la API real (npm run dev, en el puerto 3001 porque el 3000 estaba ocupado en mi PC):
+  ver menu, enviar pedido, ver la cocina y consultar el pedido funcionaron. Falta probarla detras de Apache/Nginx.
+Bloqueos o dudas: (1) Brissvey: cuando cambies data.ts a rangos, usa precioMin/precioMax en cada plato y
+  totalMin/totalMax en el pedido; la interfaz ya los entiende. (2) Josue: Apache debe servir web/ como raiz
+  (index.html) y reenviar /menu, /pedidos, /cocina. (3) /cocina no tiene forma de marcar un pedido como
+  "listo"; si el equipo la quiere, hace falta una ruta nueva (ej. PATCH /pedidos/:numero) y asi.
+<<<

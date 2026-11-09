@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Comedor Mamá Toyo – Pedidos para llevar</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <h1>Comedor Mamá Toyo</h1>
+      <p>Pedidos para llevar · San Miguel</p>
+      <nav class="tabs" aria-label="Secciones">
+        <a href="index.html" aria-current="page">Menú y pedido</a>
+        <a href="cocina.html">Cocina</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="layout">
+      <section aria-labelledby="t-menu">
+        <h2 id="t-menu">Menú del día</h2>
+        <p class="sub">Los precios son referenciales. Elige la cantidad de cada plato.</p>
+        <div id="error-menu" class="msg err" hidden></div>
+        <div id="menu" aria-live="polite"><p class="sub">Cargando menú…</p></div>
+      </section>
+
+      <aside class="panel" aria-labelledby="t-pedido">
+        <h3 id="t-pedido">Tu pedido</h3>
+        <ul id="lineas" class="lines"></ul>
+        <div class="total"><span>Total</span><span id="total">$0.00</span></div>
+        <p id="nota-total" class="note" hidden>El total es aproximado: depende del precio final de cada plato.</p>
+
+        <div id="confirmacion" class="msg ok" hidden></div>
+        <div id="error-pedido" class="msg err" hidden></div>
+
+        <form id="form" novalidate>
+          <label for="cliente">Tu nombre</label>
+          <input id="cliente" type="text" maxlength="60" autocomplete="name" placeholder="Ej. Ana" required>
+          <button id="enviar" class="btn" type="submit" disabled>Enviar pedido</button>
+        </form>
+      </aside>
+    </div>
+
+    <section class="lookup" aria-labelledby="t-consulta">
+      <h2 id="t-consulta">¿Ya hiciste un pedido?</h2>
+      <p class="sub">Escribe tu número de pedido para ver cómo va.</p>
+      <form id="form-consulta" class="row" novalidate>
+        <input id="numero" type="number" min="1" inputmode="numeric" placeholder="N.º de pedido" aria-label="Número de pedido">
+        <button class="btn" type="submit">Consultar</button>
+      </form>
+      <div id="resultado"></div>
+    </section>
+  </main>
+
+  <footer class="node">Atendido por el servidor: <b id="nodo">—</b></footer>
+
+  <script src="common.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

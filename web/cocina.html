@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cocina – Mamá Toyo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <h1>Comedor Mamá Toyo</h1>
+      <p>Vista de cocina</p>
+      <nav class="tabs" aria-label="Secciones">
+        <a href="index.html">Menú y pedido</a>
+        <a href="cocina.html" aria-current="page">Cocina</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div>
+        <h2>Pedidos pendientes</h2>
+        <p class="sub" id="estado">Cargando…</p>
+      </div>
+      <button id="actualizar" class="btn alt" type="button">Actualizar ahora</button>
+    </div>
+    <div id="error" class="msg err" hidden></div>
+    <div id="cocina" class="kitchen" aria-live="polite"></div>
+  </main>
+
+  <footer class="node">Atendido por el servidor: <b id="nodo">—</b></footer>
+
+  <script src="common.js"></script>
+  <script src="cocina.js"></script>
+</body>
+</html>
