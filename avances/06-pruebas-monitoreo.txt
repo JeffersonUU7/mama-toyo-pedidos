@@ -39,7 +39,7 @@ ENTRADAS
 -----------------------------------------------------------------------
 
 «««ENTRADA
-Fecha: [fecha real]
+Fecha: [09/11/2026]
 Que hice: Seleccioné Grafana k6 como herramienta para realizar las pruebas de carga del proyecto. Justifiqué su elección y elaboré el plan de pruebas de rendimiento, incluyendo escenarios, métricas y criterios de aceptación.
 Archivos que toque: docs/PRUEBAS_DE_CARGA.md, avances/06-pruebas-monitoreo.txt
 Rama / numero de PR: avance/randal-plan-carga / PR
