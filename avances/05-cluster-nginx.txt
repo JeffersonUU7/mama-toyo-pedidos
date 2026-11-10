@@ -38,4 +38,10 @@ Bloqueos o dudas:
 
 ENTRADAS
 -----------------------------------------------------------------------
+Fecha: 2026-11-10
+Que hice: Clonacion del repositorio, prueba del servidor local y registro de mis datos personales.
+Archivos que toque: avances/05-cluster-nginx.txt
+Rama / numero de PR: avance/juanflores-registro
+Como lo probe: Ejecute npm install y npm run dev, verificando en http://localhost:3000/health la respuesta {"status":"ok","node":"local"}.
+Bloqueos o dudas: Ninguno
 
