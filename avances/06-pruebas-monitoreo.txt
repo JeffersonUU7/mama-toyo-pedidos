@@ -2,8 +2,8 @@ AVANCES - 06 PRUEBAS DE CARGA Y MONITOREO
 =======================================================================
 
 Nombre completo: Randal Lopez
-Carnet:
-Usuario de GitHub:
+Carnet:U20250372
+Usuario de GitHub:Randal-Lopez
 Area: Pruebas de carga y monitoreo
 
 (Completa tus datos. Este archivo es SOLO TUYO: nadie mas lo edita.)
@@ -11,10 +11,10 @@ Area: Pruebas de carga y monitoreo
 
 TAREAS (cambia [ ] por [x] cuando las termines)
 -----------------------------------------------------------------------
-[ ] Registro: instalar herramientas, clonar, probar npm run dev
-[ ] Registro: completar mis datos en este archivo y abrir mi primer PR
-[ ] Ronda 1: elegir la herramienta de pruebas de carga y justificar la eleccion
-[ ] Ronda 1: escribir el plan de pruebas en docs/PRUEBAS_DE_CARGA.md
+[x] Registro: instalar herramientas, clonar, probar npm run dev
+[x] Registro: completar mis datos en este archivo y abrir mi primer PR
+[x] Ronda 1: elegir la herramienta de pruebas de carga y justificar la eleccion
+[x] Ronda 1: escribir el plan de pruebas en docs/PRUEBAS_DE_CARGA.md
 [ ] Ronda 2: correr las primeras pruebas de carga y guardar los resultados
 [ ] Ronda 3: aplicar seguridad y monitoreo (temas de la Clase 37)
 [ ] Ronda 3: validar el dimensionamiento (demanda pico 300, capacidad por nodo 400) con pruebas reales
@@ -38,3 +38,11 @@ Bloqueos o dudas:
 ENTRADAS
 -----------------------------------------------------------------------
 
+«««ENTRADA
+Fecha: [fecha real]
+Que hice: Seleccioné Grafana k6 como herramienta para realizar las pruebas de carga del proyecto. Justifiqué su elección y elaboré el plan de pruebas de rendimiento, incluyendo escenarios, métricas y criterios de aceptación.
+Archivos que toque: docs/PRUEBAS_DE_CARGA.md, avances/06-pruebas-monitoreo.txt
+Rama / numero de PR: avance/randal-plan-carga / PR
+Como lo probe: Revisé la estructura del documento, la justificación de la herramienta y los escenarios de pruebas propuestos.
+Bloqueos o dudas: Pendiente ejecutar las pruebas reales y confirmar los endpoints disponibles.
+<<<»»»
