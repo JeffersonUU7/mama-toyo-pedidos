@@ -2,8 +2,8 @@ AVANCES - 05 CLUSTER DOCKER Y NGINX
 =======================================================================
 
 Nombre completo: Juan Flores
-Carnet:
-Usuario de GitHub:
+Carnet: U20250374
+Usuario de GitHub: Juanh3rn4nd3z
 Area: Cluster Docker y Nginx
 
 (Completa tus datos. Este archivo es SOLO TUYO: nadie mas lo edita.)
@@ -11,8 +11,8 @@ Area: Cluster Docker y Nginx
 
 TAREAS (cambia [ ] por [x] cuando las termines)
 -----------------------------------------------------------------------
-[ ] Registro: instalar herramientas, clonar, probar npm run dev
-[ ] Registro: completar mis datos en este archivo y abrir mi primer PR
+[X] Registro: instalar herramientas, clonar, probar npm run dev
+[X] Registro: completar mis datos en este archivo y abrir mi primer PR
 [ ] Ronda 1: probar "docker compose up --build" y confirmar que los 3 servicios levantan
 [ ] Ronda 1: verificar el balanceo (el campo "node" alterna entre nodo-1 y nodo-2)
 [ ] Ronda 1: verificar el failover ("docker compose stop app1" y el sitio sigue respondiendo)
