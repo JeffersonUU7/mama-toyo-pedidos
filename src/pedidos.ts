@@ -9,34 +9,47 @@ export interface Pedido {
   numero: number;
   cliente: string;
   items: ItemPedido[];
-  total: number;
+  totalMin: number;
+  totalMax: number;
   estado: 'pendiente' | 'listo';
   creado: string;
 }
 
-// OJO: almacenamiento EN MEMORIA, solo para arrancar.
-// En un clúster cada nodo tendría su propia lista. Ver docs/DECISIONES.md.
+// Almacenamiento en memoria.
 const pedidos: Pedido[] = [];
 let contador = 1;
 
 export function crearPedido(cliente: string, items: ItemPedido[]): Pedido {
-  const total = items.reduce((acc, it) => {
+  let totalMin = 0;
+  let totalMax = 0;
+
+  for (const it of items) {
     const plato = platosDelDia.find((p) => p.id === it.platoId);
-    if (!plato) throw new Error(`Plato ${it.platoId} no existe`);
-    return acc + plato.precio * it.cantidad;
-  }, 0);
+
+    if (!plato) {
+      throw new Error(`Plato ${it.platoId} no existe`);
+    }
+
+    totalMin += plato.precioMin * it.cantidad;
+    totalMax += plato.precioMax * it.cantidad;
+  }
 
   const pedido: Pedido = {
     numero: contador++,
     cliente,
     items,
-    total: Math.round(total * 100) / 100,
+    totalMin: Math.round(totalMin * 100) / 100,
+    totalMax: Math.round(totalMax * 100) / 100,
     estado: 'pendiente',
     creado: new Date().toISOString(),
   };
+
   pedidos.push(pedido);
   return pedido;
 }
 
-export const buscarPedido = (numero: number) => pedidos.find((p) => p.numero === numero);
-export const pedidosPendientes = () => pedidos.filter((p) => p.estado === 'pendiente');
+export const buscarPedido = (numero: number) =>
+  pedidos.find((p) => p.numero === numero);
+
+export const pedidosPendientes = () =>
+  pedidos.filter((p) => p.estado === 'pendiente');
