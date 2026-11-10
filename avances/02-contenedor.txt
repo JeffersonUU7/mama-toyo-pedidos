@@ -2,8 +2,8 @@ AVANCES - 02 CONTENEDOR EXPRESS/TYPESCRIPT
 =======================================================================
 
 Nombre completo: Brissvey Calderon
-Carnet:
-Usuario de GitHub:
+Carnet: U20251489
+Usuario de GitHub: Brissvey
 Area: Contenedor Express/TypeScript
 
 (Completa tus datos. Este archivo es SOLO TUYO: nadie mas lo edita.)
