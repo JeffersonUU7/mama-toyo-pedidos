@@ -18,8 +18,8 @@ Mama Toyo (San Miguel, El Salvador). El local es pequeno y en el
 almuerzo se forman filas. El sitio permite ver el menu, pedir con
 anticipacion y le da a la cocina una lista de pedidos pendientes.
 
-El menu es el del Comedor Mama Toyo (ver docs/MENU.md). Los precios son
-referenciales y vienen en rangos.
+El menu y los precios son los del Comedor Mama Toyo (ver docs/MENU.md).
+Cada plato tiene un precio minimo y uno maximo.
 El proyecto corre en local con Docker; no se publica en internet.
 
 Objetivo tecnico: integrar las tres unidades del curso en un solo sistema:
@@ -97,21 +97,23 @@ REGLAS DE TRABAJO EN GIT
   - Nunca subir el archivo .env ni contrasenas.
 
 
+-----------------------------------------------------------------------------------------------------------------------------------------
+DECISIONES TOMADAS (detalle en docs/DECISIONES.md)
 -----------------------------------------------------------------------
-DECISIONES PENDIENTES (se resuelven entre todos)
------------------------------------------------------------------------
-  1. Persistencia de pedidos: hoy los pedidos viven en la MEMORIA de cada
-     nodo. En un cluster, un pedido creado en el nodo 1 no existe en el
-     nodo 2. Hay que decidir como compartir el estado (base de datos en
-     Docker Compose, Redis, etc.).
-  2. HTTPS en el balanceador Nginx (se hace en la ultima ronda).
-  3. Si el servidor web (Apache o IIS) va dentro de cada nodo o delante
-     del balanceador.
-  4. Health check: Nginx usa check pasivo; el check a nivel de URL
-     (/health) lo hace el HEALTHCHECK de Docker.
+  1. Pedidos: se guardan en PostgreSQL (servicio en Docker Compose), para
+     que los dos nodos vean los mismos pedidos. Sin DATABASE_URL la app
+     usa memoria, para poder correr npm run dev sin Docker.
+  2. Entrada: Nginx es el punto de entrada unico (HTTPS) y balancea hacia
+     dos nodos; cada nodo tiene su Apache y su Express. Se construye por
+     etapas. Plan B: Apache delante de Nginx.
+  3. Health check: Nginx pasivo + HEALTHCHECK de Docker en /health.
+  4. Precios: se mantienen como rangos (minimo y maximo), igual que en
+     docs/MENU.md.
+  5. Marcar un pedido como listo: PATCH /pedidos/:numero (despues de la
+     persistencia).
 
 
------------------------------------------------------------------------
+-----
 DIMENSIONAMIENTO ACTUAL (por validar con pruebas de carga)
 -----------------------------------------------------------------------
   Demanda pico 300 usuarios simultaneos, capacidad por nodo 400,

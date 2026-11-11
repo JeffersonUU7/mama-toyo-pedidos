@@ -1,10 +1,10 @@
 // Código compartido por index.html y cocina.html (sin librerías externas).
 
-// Dirección de la API. Vacío = mismo origen: la página y la API salen del mismo servidor
-// (Apache, o Nginx en :8080), así no se necesita CORS.
+// Dirección de la API. Por defecto /api en el mismo origen: la página y la API salen del mismo
+// servidor (Apache reenvía /api al contenedor Express), así no se necesita CORS.
 // Para probar la página abierta desde otro puerto (por ejemplo un servidor estático en :5500),
-// abre la página con ?api=http://localhost:3000   (o :8080 para ir por el balanceador).
-const API_BASE = (new URLSearchParams(location.search).get('api') || '').replace(/\/$/, '');
+// abre la página con ?api=http://localhost:3000/api   (o http://localhost:8080/api por el balanceador).
+const API_BASE = (new URLSearchParams(location.search).get('api') || '/api').replace(/\/$/, '');
 
 async function api(ruta, opciones) {
   let res;
@@ -24,7 +24,7 @@ async function api(ruta, opciones) {
 
 const money = (n) => '$' + Number(n).toFixed(2);
 
-// Los precios del menú real son rangos (docs/DECISIONES.md, Pendiente 5).
+// Los precios del menú real son rangos (docs/DECISIONES.md, Decisión 4).
 // Esta función acepta {precio} (un solo valor) o {precioMin, precioMax}.
 function rango(min, max) {
   return Number(min).toFixed(2) === Number(max).toFixed(2) ? money(min) : `${money(min)} – ${money(max)}`;
