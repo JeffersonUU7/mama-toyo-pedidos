@@ -1,8 +1,8 @@
 # Menú del Comedor Mamá Toyo
 
-Menú que usa el sistema. Los precios son **referenciales** y se expresan en rangos.
+Menú y precios del comedor, tal como los usa el sistema. Cada plato tiene un precio mínimo y uno máximo.
 
-Recopilado por: ______________________  ·  Fecha: ____ / ____ / ________
+Verificado en el comedor por: Jefferson Requeno  ·  Fecha: ____ / ____ / ________
 
 | N.º | Plato | Precio mínimo | Precio máximo |
 |---|---|---|---|
@@ -17,4 +17,4 @@ Recopilado por: ______________________  ·  Fecha: ____ / ____ / ________
 | 9 | Ensalada fresca | $0.50 | $1.00 |
 | 10 | Sopa de gallina india | $5.00 | $8.00 |
 
-Cómo se usa este menú en la aplicación: ver `docs/DECISIONES.md`, Pendiente 5.
+Cómo se usa este menú en la aplicación: ver `docs/DECISIONES.md`, Decisión 4.

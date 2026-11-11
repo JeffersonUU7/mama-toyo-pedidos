@@ -2,8 +2,8 @@ AVANCES - 06 PRUEBAS DE CARGA Y MONITOREO
 =======================================================================
 
 Nombre completo: Randal Lopez
-Carnet:U20250372
-Usuario de GitHub:Randal-Lopez
+Carnet: U20250372
+Usuario de GitHub: Randal-Lopez
 Area: Pruebas de carga y monitoreo
 
 (Completa tus datos. Este archivo es SOLO TUYO: nadie mas lo edita.)
@@ -38,11 +38,9 @@ Bloqueos o dudas:
 ENTRADAS
 -----------------------------------------------------------------------
 
-«««ENTRADA
-Fecha: [09/11/2026]
+Fecha: 09/11/2026
 Que hice: Seleccioné Grafana k6 como herramienta para realizar las pruebas de carga del proyecto. Justifiqué su elección y elaboré el plan de pruebas de rendimiento, incluyendo escenarios, métricas y criterios de aceptación.
 Archivos que toque: docs/PRUEBAS_DE_CARGA.md, avances/06-pruebas-monitoreo.txt
-Rama / numero de PR: avance/randal-plan-carga / PR
+Rama / numero de PR: avance/randal-registro (PR #6)
 Como lo probe: Revisé la estructura del documento, la justificación de la herramienta y los escenarios de pruebas propuestos.
 Bloqueos o dudas: Pendiente ejecutar las pruebas reales y confirmar los endpoints disponibles.
-<<<»»»

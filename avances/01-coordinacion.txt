@@ -69,3 +69,29 @@ Como lo probe: Revise el contenido de cada PR antes del merge y confirme
   que main quedo con apache/, certs/ y docs/SERVIDOR_WEB.md
 Bloqueos o dudas: Falta decidir como se manejan los precios en rangos
   (docs/DECISIONES.md, Pendiente 5)
+
+Fecha: 10/11/2026
+Que hice: Prepare lo necesario para la Fase 2 (Clase 33) y deje registradas las
+  decisiones del proyecto. Revise e integre los PR #4 (interfaz web de
+  Yessica), #6 (plan de pruebas de Randal) y #7 (mejoras del contenedor de
+  Brissvey). Agregue el prefijo /api a las rutas de la API y deje Apache y el
+  contenedor Express en un solo docker-compose. Agregue soporte de mkcert en
+  el script del certificado. Reescribi el README con el diagrama de
+  arquitectura y cree docs/ARQUITECTURA.md y la carpeta docs/evidencias.
+  Registre las decisiones tecnicas en docs/DECISIONES.md (PostgreSQL para los
+  pedidos, arquitectura de entrada, health check, precios y pedido listo) y
+  actualice docs/ORDEN_DE_TRABAJO.md. Quite la palabra "referenciales" de los
+  precios. Corregi pendientes de los PR #6 y #7: formato del registro de
+  Randal, limites de cantidad y de largo del nombre en la API, y el comentario
+  sobre el almacenamiento en memoria.
+Archivos que toque: README.md, src/app.ts, src/pedidos.ts, web/common.js,
+  web/index.html, apache/httpd.conf, apache/docker-compose.apache.yml,
+  certs/generar-certificado.sh, docs/ARQUITECTURA.md, docs/SERVIDOR_WEB.md,
+  docs/DECISIONES.md, docs/ORDEN_DE_TRABAJO.md, docs/MENU.md,
+  docs/CONTEXTO_DEL_PROYECTO.txt, docs/evidencias/README.md,
+  avances/06-pruebas-monitoreo.txt, avances/01-coordinacion.txt
+Rama / numero de PR: avance/jefferson-fase2 (PR hacia main)
+Como lo probe: npm run build y las rutas /api y las validaciones de la API con
+  curl.
+Bloqueos o dudas: Falta probar Apache con Docker en mi equipo y tomar las
+  capturas de HTTPS (docs/evidencias).

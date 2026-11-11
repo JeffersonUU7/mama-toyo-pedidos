@@ -15,7 +15,8 @@ export interface Pedido {
   creado: string;
 }
 
-// Almacenamiento en memoria.
+// Almacenamiento EN MEMORIA: cada nodo tiene su propia lista de pedidos.
+// Se reemplaza por PostgreSQL (docs/DECISIONES.md, Decisión 1).
 const pedidos: Pedido[] = [];
 let contador = 1;
 

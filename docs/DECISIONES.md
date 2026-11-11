@@ -1,50 +1,76 @@
-# Decisiones técnicas pendientes y registradas
+# Decisiones técnicas
 
-## Pendiente 1: ¿dónde se guardan los pedidos? (importante)
+Estas decisiones las tomó la coordinación (Jefferson) el 09/11/2026 y aplican a todo el equipo.
+Si alguien ve un problema serio con alguna, lo avisa por el grupo antes de cambiarla por su cuenta.
 
-Hoy los pedidos se guardan **en la memoria de cada nodo**. En un clúster con 2 nodos esto causa
-un fallo real: un pedido creado en `nodo-1` **no existe** en `nodo-2`. Si el cliente consulta su pedido
-y el balanceador lo manda al otro nodo, recibe "no encontrado"; y `/cocina` mostraría pedidos distintos
-según el nodo.
+## Decisión 1: los pedidos se guardan en PostgreSQL
 
-Opciones a evaluar (el equipo decide antes de la Clase 36):
+**Problema.** Hoy los pedidos viven en la memoria de cada nodo. Con 2 nodos, un pedido creado en `nodo-1`
+no existe en `nodo-2`: el cliente consulta su pedido y a veces le sale "no encontrado", y `/cocina` muestra
+listas distintas según el nodo. Un clúster solo es "sin estado" si el estado vive fuera de los nodos.
 
-| Opción | Ventaja | Costo |
-|---|---|---|
-| Servicio de base de datos en Docker Compose (por ejemplo PostgreSQL) | Es lo más cercano a un sistema real | Un servicio más que configurar |
-| Redis compartido | Simple y rápido | Datos menos duraderos |
-| Archivo/volumen compartido | Muy simple | Frágil con escrituras simultáneas |
+**Decisión.** PostgreSQL 16 como servicio de Docker Compose, con un volumen para que los datos no se pierdan.
 
-Un clúster solo es "sin estado" si el estado vive fuera de los nodos. Esta decisión debe explicarse en la defensa.
+**Cómo se implementa**
+- Juan: servicio `db` en `docker-compose.yml` (imagen `postgres:16-alpine`, volumen nombrado y healthcheck con `pg_isready`).
+  `app1` y `app2` reciben `DATABASE_URL` y esperan a que `db` esté sano (`depends_on` con `condition: service_healthy`).
+- Brissvey: `src/pedidos.ts` usa el paquete `pg`. Al arrancar crea la tabla `pedidos` si no existe, con número
+  (serial, clave primaria), cliente, items (jsonb), total mínimo, total máximo, estado (pendiente o listo) y fecha.
+- Si `DATABASE_URL` no está definida, la app sigue usando memoria, para que `npm run dev` funcione sin Docker.
 
-## Pendiente 2: HTTPS en el balanceador
+**Cómo se comprueba.** Crear un pedido y consultar varias veces `http://localhost:8080/pedidos/1`: debe aparecer
+siempre, sin importar qué nodo responda.
 
-Se agrega en la Clase 37. Mientras tanto Nginx corre en HTTP (puerto 8080). Se necesita un certificado
-autofirmado en `certs/` (las llaves están en `.gitignore`: no se suben al repositorio).
+**Por qué no las otras opciones.** Redis guarda en memoria por defecto, así que es menos duradero para pedidos.
+Un archivo compartido es frágil con escrituras simultáneas.
 
-## Pendiente 3: servidor web (Apache o IIS)
+**Límite que se declara en la defensa.** La base de datos es una sola y no se replica, así que es un punto único
+de falla. La alta disponibilidad de este proyecto cubre la capa de aplicación.
 
-Decidir si el servidor web de la Unidad 2 va dentro de cada nodo o delante del balanceador, y reflejarlo en el diagrama.
+## Decisión 2: Nginx al frente, y Apache en cada nodo
 
-## Pendiente 4: health check
+```
+Cliente --HTTPS--> Nginx --HTTPS--> Apache 1 --> Express 1 --\
+                                \-> Apache 2 --> Express 2 ---> PostgreSQL
+```
 
-Hoy Nginx usa health check **pasivo** (saca un nodo tras 2 fallos). El check a nivel de URL
-(`/health`) lo ejecuta Docker (`HEALTHCHECK` del Dockerfile). Evaluar cómo mostrarlo en la demo.
+**Por qué.** Nginx es el punto de entrada único, como se vio en clase. Hay HTTPS en el servidor (Apache) y en el
+balanceador (Nginx), como pide el alcance del proyecto. Y cada nodo repite lo trabajado en las Unidades 1 y 2.
 
-## Pendiente 5: precios en rangos
+**Se construye por etapas, para que cada una se pueda demostrar:**
+1. **Etapa 1 (Clase 36).** Nginx balancea los dos Express, que ya existen, y se agrega PostgreSQL. Mientras tanto la
+   interfaz se sigue viendo con el Apache independiente (`apache/docker-compose.apache.yml`).
+2. **Etapa 2 (antes de la Clase 39).** Cada nodo tiene su Apache, que sirve `web/` y reenvía a su Express. Nginx
+   balancea hacia los Apache. Responsables: Josué y Juan.
+3. **Etapa 3 (Clase 37).** HTTPS en Nginx con un certificado autofirmado de `certs/`. Nginx habla por HTTPS con los
+   Apache. Responsable: Josué.
 
-El menú real (`docs/MENU.md`) tiene precios en **rangos** (por ejemplo, pollo frito de $3.50 a $4.50), pero
-la app guarda **un solo precio** por plato y calcula el total del pedido con él. Hay que decidir cómo se maneja:
+**Plan B si no alcanza el tiempo** (propuesta de Josué): Apache delante de Nginx. Se cambia el `ProxyPass` a
+`http://nginx:80` y se unen ambos compose a la misma red. Funciona con pocos cambios, pero el balanceador deja de ser
+la entrada y Apache pasa a ser un punto único de falla. La coordinación decide si se usa al terminar la Clase 36.
 
-| Opción | Ventaja | Costo |
-|---|---|---|
-| Guardar `precioMin` y `precioMax` y mostrar el total como rango | Fiel al menú real | Cambia `src/data.ts`, `src/pedidos.ts` y la interfaz |
-| Un precio fijo por plato (por ejemplo, el mínimo o un punto medio acordado) | Simple, no cambia la lógica | El total es aproximado |
-| Dividir en variantes con precio fijo (porción pequeña, porción grande) | Cada variante tiene su precio | Hay que definir las variantes con el comedor |
+## Decisión 3: health check
 
-Decide el equipo (área 2 implementa) antes de la Clase 33.
+Se queda como está: Nginx saca un nodo tras 2 fallos (comprobación pasiva) y Docker revisa `/health` con el
+`HEALTHCHECK` del Dockerfile. Para la demo se muestra `docker compose ps` (estado healthy) y el failover con
+`docker compose stop app1`. En la Ronda 3, Randal puede agregar un script de monitoreo que consulte `/health`.
 
-## Decisiones registradas
+## Decisión 4: los precios se mantienen como rangos
+
+Los precios de `docs/MENU.md` son los del comedor, verificados en el local. Se mantienen como rangos
+(`precioMin` y `precioMax`) y el total del pedido se muestra como rango. Ya está implementado en `src/data.ts`,
+`src/pedidos.ts` y en la interfaz.
+
+## Decisión 5: marcar un pedido como listo
+
+Sí, pero después de la persistencia. Ruta `PATCH /pedidos/:numero` con `{"estado":"listo"}`. Brissvey hace la ruta y
+Yessica el botón en `cocina.html`. Si el tiempo no alcanza, no entra en la demo de la Clase 36.
+
+## Límites de validación (ya aplicados en la API)
+
+Cantidad por plato de 1 a 20, hasta 20 líneas por pedido y nombre de hasta 60 caracteres. Son los mismos límites de la interfaz web.
+
+## Decisiones anteriores
 
 - Clúster activo-activo con balanceo de carga, 2 nodos mínimo.
 - Dimensionamiento inicial: 300 usuarios de pico, 400 por nodo, factor 1.5, resultado 2 nodos (por validar con pruebas de carga).

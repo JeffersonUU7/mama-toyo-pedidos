@@ -1,16 +1,23 @@
-# Servidor web Apache (Unidad 2). Se levanta aparte del cluster para no tocar docker-compose.yml:
+# Fase 2: servidor web Apache (HTTPS + reverse proxy) y contenedor Express, juntos.
 #   1) bash certs/generar-certificado.sh
-#   2) npm run dev                      (la app en el puerto 3000)
-#   3) docker compose -f apache/docker-compose.apache.yml up
-# Entrar por https://localhost:8443  (el navegador avisara del certificado autofirmado: es normal)
+#   2) docker compose -f apache/docker-compose.apache.yml up --build
+# Entrar por https://localhost:8443
 services:
+  app:
+    build:
+      context: ..            # raiz del repositorio (usa el Dockerfile de ahi)
+    environment:
+      - NODE_ID=app
+      - PORT=3000
+    restart: unless-stopped
+
   apache:
     image: httpd:2.4-alpine
     ports:
       - "8081:80"
       - "8443:443"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"   # para que funcione tambien en Linux
+    depends_on:
+      - app
     volumes:
       - ./httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
       - ../web:/usr/local/apache2/htdocs:ro
