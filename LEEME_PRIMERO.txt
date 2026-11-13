@@ -55,7 +55,7 @@ PASO 3. COMPROBAR QUE FUNCIONA
   npm install
   npm run dev
 
-Abre en el navegador: http://localhost:3000/health
+Abre en el navegador: http://localhost:3000/api/health
 Debe mostrar:  {"status":"ok","node":"local"}
 Para detenerlo: Ctrl + C
 
