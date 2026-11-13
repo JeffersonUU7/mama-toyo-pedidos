@@ -14,23 +14,27 @@ El detalle de cada tarea y su registro de avances está en la carpeta `avances/`
 | 5 | Clúster Docker y Nginx | Juan Flores |
 | 6 | Pruebas de carga y monitoreo | Randal Lopez |
 
-## Entrega 2 – Clase 33 (20 %): arquitectura + repositorio con contenedor y servidor configurados
+## Entrega 2 – Clase 33 (20 %): contenedor + servidor web con HTTPS (Fase 2, entregada)
 
-- [ ] (2) Revisar y completar las rutas de la app; agregar validaciones y manejo de errores
-- [ ] (2) Verificar que el contenedor construye y corre con `docker build`
-- [ ] (3) Página web estática con el menú del día y formulario de pedido (consume `/menu` y `/pedidos`)
-- [ ] (4) Configurar el servidor web (Apache o IIS) para servir lo estático y reenviar lo dinámico al contenedor
-- [ ] (4) Configurar HTTPS con certificado autofirmado en local
-- [ ] (5) Revisar `docker-compose.yml` y `nginx/nginx.conf`
-- [ ] (1) Diagrama de arquitectura detallado en `docs/`
-- [ ] (1) README completo con los pasos para correr el proyecto
+- [x] (2) Revisar y completar las rutas de la app; agregar validaciones y manejo de errores
+- [x] (2) Verificar que el contenedor construye y corre con Docker
+- [x] (3) Página web estática con el menú del día y formulario de pedido (consume `/api/menu` y `/api/pedidos`)
+- [x] (4) Configurar Apache para servir lo estático y reenviar `/api` al contenedor
+- [x] (4) Configurar HTTPS con certificado local (mkcert)
+- [ ] (5) Confirmar con Docker `docker-compose.yml` y `nginx/nginx.conf` (el balanceo y el failover se probaron fuera de Docker)
+- [x] (1) Diagrama de arquitectura detallado en `docs/ARQUITECTURA.md`
+- [x] (1) README completo con los pasos para correr el proyecto
 
-## Entrega 3 – Clase 36 (20 %): demo del clúster con balanceo funcionando
+## Entrega 3 – Clase 36 (20 %): demo del clúster con balanceo y base de datos
 
-- [ ] (5) Clúster de 2 nodos balanceado por Nginx funcionando con `docker compose up`
-- [ ] (2) Resolver el problema de pedidos entre nodos (ver `docs/DECISIONES.md`)
-- [ ] (5) Demostrar el failover: apagar un nodo y que el sitio siga respondiendo
-- [ ] (6) Primeras pruebas de carga y registro de resultados
+- [ ] (5) Clúster de 2 nodos balanceado por Nginx funcionando con `docker compose up`, con balanceo y failover confirmados
+- [ ] (5) Servicio `db` (PostgreSQL) en `docker-compose.yml` y `DATABASE_URL` en los nodos (contrato en `docs/DECISIONES.md`, Decisión 1)
+- [ ] (2) Pedidos guardados en PostgreSQL en `src/pedidos.ts` (Decisión 1)
+- [ ] (2) Ruta `PATCH /api/pedidos/:numero` para marcar un pedido como listo (Decisión 5)
+- [ ] (3) Botón "marcar listo" en la vista de cocina
+- [ ] (5) Demostrar el failover con la base de datos
+- [ ] (6) Primeras pruebas de carga (1 y 2 nodos, una de 300 a 400 usuarios virtuales) y resultados en `docs/`
+- [ ] (4) Preparar el Apache por nodo (`apache1` y `apache2`), Decisión 2, etapa 2
 - [ ] (1) Guion de la demo (qué se muestra y quién lo muestra)
 
 ## Entrega final – Clase 39 (50 %): entrega + defensa

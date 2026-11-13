@@ -18,6 +18,24 @@ listas distintas según el nodo. Un clúster solo es "sin estado" si el estado v
   (serial, clave primaria), cliente, items (jsonb), total mínimo, total máximo, estado (pendiente o listo) y fecha.
 - Si `DATABASE_URL` no está definida, la app sigue usando memoria, para que `npm run dev` funcione sin Docker.
 
+**Contrato entre Juan y Brissvey** (para que sus cambios encajen):
+
+| Dato | Valor |
+|---|---|
+| Servicio en Compose | `db`, imagen `postgres:16-alpine` |
+| Base de datos y usuario | `toyo` y `toyo` |
+| Contraseña (solo desarrollo local) | `${POSTGRES_PASSWORD:-toyo_local}`; se agrega `POSTGRES_PASSWORD=toyo_local` a `.env.example`. En la Ronda 3 se revisa como parte de la seguridad. |
+| Variable que reciben los nodos | `DATABASE_URL=postgres://toyo:${POSTGRES_PASSWORD:-toyo_local}@db:5432/toyo` |
+| Volumen | `pgdata`, montado en `/var/lib/postgresql/data` |
+| Healthcheck de `db` | `pg_isready -U toyo -d toyo`, cada 5 segundos |
+| Dependencia | `app1` y `app2` con `depends_on: db: condition: service_healthy` |
+| Paquete en la app | `pg` en `dependencies` (no en `devDependencies`, porque el Dockerfile instala solo lo de producción) y `@types/pg` en `devDependencies` |
+| Tabla `pedidos` | `numero` SERIAL clave primaria, `cliente` TEXT, `items` JSONB, `total_min` y `total_max` NUMERIC(10,2), `estado` TEXT con valor por defecto `'pendiente'`, `creado` TIMESTAMPTZ con valor por defecto `now()` |
+| Respuesta de la API | La misma de hoy: `numero`, `cliente`, `items`, `totalMin`, `totalMax`, `estado` y `creado` |
+
+Un detalle que suele fallar: `pg` devuelve las columnas `NUMERIC` como texto. Hay que convertirlas con `Number()` para que
+`totalMin` y `totalMax` sigan siendo números, como espera la interfaz.
+
 **Cómo se comprueba.** Crear un pedido y consultar varias veces `http://localhost:8080/pedidos/1`: debe aparecer
 siempre, sin importar qué nodo responda.
 
@@ -63,8 +81,9 @@ Los precios de `docs/MENU.md` son los del comedor, verificados en el local. Se m
 
 ## Decisión 5: marcar un pedido como listo
 
-Sí, pero después de la persistencia. Ruta `PATCH /pedidos/:numero` con `{"estado":"listo"}`. Brissvey hace la ruta y
-Yessica el botón en `cocina.html`. Si el tiempo no alcanza, no entra en la demo de la Clase 36.
+Sí, pero después de la persistencia. Ruta `PATCH /api/pedidos/:numero` con `{"estado":"listo"}`. Responde 200 con `{node, pedido}`; 404 si el pedido
+no existe; 400 si el número es inválido o el estado no es `listo`. Repetirla sobre un pedido ya listo no da error.
+`/api/cocina` muestra solo los pendientes. Brissvey hace la ruta y Yessica el botón en `cocina.html`. Si el tiempo no alcanza, no entra en la demo de la Clase 36.
 
 ## Límites de validación (ya aplicados en la API)
 

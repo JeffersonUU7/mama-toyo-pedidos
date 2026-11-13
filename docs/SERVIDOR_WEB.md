@@ -71,9 +71,6 @@ Probado en Windows con Docker Desktop, con la app corriendo con `npm run dev`:
 | `http://localhost:8081` | Redirige a `https://localhost:8443/` |
 | Log de Apache al arrancar | Sin advertencias tras generar el certificado con `CA:FALSE` |
 
-Pendiente: probar con la interfaz real cuando Yessica suba `web/`, y decidir si el proxy apunta al balanceador Nginx
-(Pendiente 3 de `docs/DECISIONES.md`).
+Con la interfaz real de `web/` ya se probó Apache en la Fase 2 (evidencias en `docs/evidencias`). La arquitectura de las siguientes fases, con Nginx al frente y un Apache por nodo, está en la Decisión 2 de `docs/DECISIONES.md`.
 
-**Cambios de la Fase 2 (pendientes de probar):** se agregó el prefijo `/api`, el contenedor Express dentro del compose de Apache,
-el soporte de mkcert y se bajó el HSTS a 5 minutos. Las pruebas de arriba se hicieron con la configuración anterior
-(app en `npm run dev` y rutas sin `/api`).
+**Cambios de la Fase 2:** se agregó el prefijo `/api`, el contenedor Express dentro del compose de Apache, el soporte de mkcert y se bajó el HSTS a 5 minutos. Se probaron con Docker en Windows (ver `docs/evidencias`). Las pruebas de la tabla de arriba se hicieron con la configuración anterior (app en `npm run dev` y rutas sin `/api`).

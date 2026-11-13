@@ -39,16 +39,18 @@ ARQUITECTURA
 -----------------------------------------------------------------------
 RUTAS DE LA APLICACION (src/app.ts)
 -----------------------------------------------------------------------
-  GET  /health            200 si el nodo funciona (lo usa el balanceador)
-  GET  /menu              platos del dia con precio
-  POST /pedidos           crea un pedido {cliente, items:[{platoId,cantidad}]}
-  GET  /pedidos/:numero   consulta un pedido
-  GET  /cocina            pedidos pendientes en orden de llegada
+  GET  /api/health            200 si el contenedor funciona
+  GET  /api/menu              platos del dia con precio minimo y maximo
+  POST /api/pedidos           crea un pedido {cliente, items:[{platoId,cantidad}]}
+  GET  /api/pedidos/:numero   consulta un pedido
+  GET  /api/cocina            pedidos pendientes en orden de llegada
 
+Las mismas rutas existen sin el prefijo /api (por ejemplo /health): las
+usan Nginx, el health check de Docker y las pruebas de carga.
 Cada respuesta incluye el campo "node" (que nodo la atendio).
 
 
------------------------------------------------------------------------
+-----
 ESTRUCTURA DEL REPOSITORIO
 -----------------------------------------------------------------------
   src/                 codigo Express/TypeScript (app.ts, server.ts,
@@ -65,6 +67,9 @@ ESTRUCTURA DEL REPOSITORIO
 COMO CORRERLO
 -----------------------------------------------------------------------
   Sin Docker:    npm install   y luego   npm run dev   (puerto 3000)
+  Fase 2:        bash certs/generar-certificado.sh   y luego
+                 docker compose -f apache/docker-compose.apache.yml up --build
+                 (entrar por https://localhost:8443)
   Con cluster:   docker compose up --build   (entrar por el puerto 8080)
   Simular falla: docker compose stop app1
 
@@ -97,7 +102,7 @@ REGLAS DE TRABAJO EN GIT
   - Nunca subir el archivo .env ni contrasenas.
 
 
------------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------
 DECISIONES TOMADAS (detalle en docs/DECISIONES.md)
 -----------------------------------------------------------------------
   1. Pedidos: se guardan en PostgreSQL (servicio en Docker Compose), para
@@ -109,11 +114,11 @@ DECISIONES TOMADAS (detalle en docs/DECISIONES.md)
   3. Health check: Nginx pasivo + HEALTHCHECK de Docker en /health.
   4. Precios: se mantienen como rangos (minimo y maximo), igual que en
      docs/MENU.md.
-  5. Marcar un pedido como listo: PATCH /pedidos/:numero (despues de la
+  5. Marcar un pedido como listo: PATCH /api/pedidos/:numero (despues de la
      persistencia).
 
 
------
+-----------------------------------------------------------------------
 DIMENSIONAMIENTO ACTUAL (por validar con pruebas de carga)
 -----------------------------------------------------------------------
   Demanda pico 300 usuarios simultaneos, capacidad por nodo 400,

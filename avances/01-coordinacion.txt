@@ -93,5 +93,22 @@ Archivos que toque: README.md, src/app.ts, src/pedidos.ts, web/common.js,
 Rama / numero de PR: avance/jefferson-fase2 (PR hacia main)
 Como lo probe: npm run build y las rutas /api y las validaciones de la API con
   curl.
-Bloqueos o dudas: Falta probar Apache con Docker en mi equipo y tomar las
-  capturas de HTTPS (docs/evidencias).
+Bloqueos o dudas: Ninguno. La Fase 2 quedo probada con Docker y con capturas
+  (docs/evidencias).
+
+Fecha: 11/11/2026
+Que hice: Entregue la Fase 2 (PR #9 y #10: rutas /api, Apache con contenedor,
+  mkcert, README, arquitectura y capturas de HTTPS). Revise el repo completo y
+  actualice los documentos que habian quedado viejos (REPARTO, ORDEN,
+  CONTEXTO, SERVIDOR_WEB, README y LEEME). Agregue a docs/DECISIONES.md el
+  contrato entre Juan y Brissvey para PostgreSQL y la ruta PATCH de pedido
+  listo, y defini las tareas y las pruebas de la Ronda 2.
+Archivos que toque: README.md, LEEME_PRIMERO.txt, docs/DECISIONES.md,
+  docs/ORDEN_DE_TRABAJO.md, docs/REPARTO.md, docs/CONTEXTO_DEL_PROYECTO.txt,
+  docs/SERVIDOR_WEB.md, avances/01-coordinacion.txt
+Rama / numero de PR: avance/jefferson-ronda2 (PR hacia main)
+Como lo probe: La Fase 2 la probe con Docker en mi equipo (capturas en
+  docs/evidencias). Este PR es solo documentacion.
+Bloqueos o dudas: Falta que Juan registre su prueba del cluster con Docker;
+  la Ronda 2 depende de eso.
+
