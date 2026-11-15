@@ -1,11 +1,30 @@
-# Clúster base: 2 nodos de la app + Nginx como balanceador (punto de entrada único).
+# Cluster base: 2 nodos de la app + Nginx como balanceador + PostgreSQL compartido.
 # HTTPS en Nginx se agrega en la Clase 37 (ver docs/DECISIONES.md).
 services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=toyo
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-toyo_local}
+      - POSTGRES_DB=toyo
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U toyo -d toyo"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
   app1:
     build: .
     environment:
       - NODE_ID=nodo-1
       - PORT=3000
+      - DATABASE_URL=postgres://toyo:${POSTGRES_PASSWORD:-toyo_local}@db:5432/toyo
+    depends_on:
+      db:
+        condition: service_healthy
     restart: unless-stopped
 
   app2:
@@ -13,6 +32,10 @@ services:
     environment:
       - NODE_ID=nodo-2
       - PORT=3000
+      - DATABASE_URL=postgres://toyo:${POSTGRES_PASSWORD:-toyo_local}@db:5432/toyo
+    depends_on:
+      db:
+        condition: service_healthy
     restart: unless-stopped
 
   nginx:
@@ -25,3 +48,6 @@ services:
       - app1
       - app2
     restart: unless-stopped
+
+volumes:
+  pgdata:

@@ -13,11 +13,11 @@ TAREAS (cambia [ ] por [x] cuando las termines)
 -----------------------------------------------------------------------
 [X] Registro: instalar herramientas, clonar, probar npm run dev
 [X] Registro: completar mis datos en este archivo y abrir mi primer PR
-[ ] Ronda 1: probar "docker compose up --build" y confirmar que los 3 servicios levantan
-[ ] Ronda 1: verificar el balanceo (el campo "node" alterna entre nodo-1 y nodo-2)
-[ ] Ronda 1: verificar el failover ("docker compose stop app1" y el sitio sigue respondiendo)
-[ ] Ronda 1: reportar o corregir errores en docker-compose.yml y nginx/nginx.conf
-[ ] Ronda 2: agregar el servicio de persistencia compartida en Compose
+[x] Ronda 1: probar "docker compose up --build" y confirmar que los 3 servicios levantan
+[x] Ronda 1: verificar el balanceo (el campo "node" alterna entre nodo-1 y nodo-2)
+[x] Ronda 1: verificar el failover ("docker compose stop app1" y el sitio sigue respondiendo)
+[x] Ronda 1: reportar o corregir errores en docker-compose.yml y nginx/nginx.conf
+[x] Ronda 2: agregar el servicio de persistencia compartida en Compose
 [ ] Ronda 2: preparar y ensayar la demo de failover
 [ ] Ronda 3: ensayo de la defensa oral
 
@@ -38,10 +38,10 @@ Bloqueos o dudas:
 
 ENTRADAS
 -----------------------------------------------------------------------
-Fecha: 2026-11-10
-Que hice: Clonacion del repositorio, prueba del servidor local y registro de mis datos personales.
-Archivos que toque: avances/05-cluster-nginx.txt
-Rama / numero de PR: avance/juanflores-registro
-Como lo probe: Ejecute npm install y npm run dev, verificando en http://localhost:3000/health la respuesta {"status":"ok","node":"local"}.
+Fecha: 2026-15-11
+Que hice:Probe el levantamiento del cluster, el balanceo entre nodo-1 y nodo-2 y el failover deteniendo app1. Corregi nginx/nginx.conf agregando zone cluster_app 64k para compartir el estado round-robin entre todos los workers de Nginx. Agregue el servicio db (postgres:16-alpine) con volumen pgdata y healthcheck pg_isready en docker-compose.yml, pase DATABASE_URL a app1 y app2 con depends_on service_healthy, y agregue POSTGRES_PASSWORD a .env.example.",
+"Archivos que toque: docker-compose.yml, nginx/nginx.conf, .env.example, avances/05-cluster-nginx.txt",
+"Rama / numero de PR: avance/juanflores-postgres",
+"Como lo probe: Ejecute docker compose up --build -d, confirme con docker compose ps que db, app1, app2 y nginx levantan sanos, probe 4 peticiones seguidas a /health alternando nodo-1 y nodo-2, y valide el failover con docker compose stop app1.",
 Bloqueos o dudas: Ninguno
 
