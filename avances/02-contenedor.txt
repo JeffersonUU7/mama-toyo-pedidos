@@ -11,13 +11,15 @@ Area: Contenedor Express/TypeScript
 
 TAREAS (cambia [ ] por [x] cuando las termines)
 -----------------------------------------------------------------------
-[ ] Registro: instalar herramientas, clonar, probar npm run dev
-[ ] Registro: completar mis datos en este archivo y abrir mi primer PR
-[ ] Ronda 1: revisar la app (src/) y entender cada ruta
-[ ] Ronda 1: mejorar validaciones y manejo de errores
-[ ] Ronda 1: verificar que "docker build" construye la imagen sin errores
-[ ] Ronda 1: habilitar CORS solo para desarrollo
-[ ] Ronda 2: implementar la persistencia compartida de pedidos (segun decision del equipo)
+TAREAS (cambia [ ] por [x] cuando las termines)
+-----------------------------------------------------------------------
+[x] Registro: instalar herramientas, clonar, probar npm run dev
+[x] Registro: completar mis datos en este archivo y abrir mi primer PR
+[x] Ronda 1: revisar la app (src/) y entender cada ruta
+[x] Ronda 1: mejorar validaciones y manejo de errores
+[x] Ronda 1: verificar que "docker build" construye la imagen sin errores
+[x] Ronda 1: habilitar CORS solo para desarrollo
+[x] Ronda 2: implementar la persistencia compartida de pedidos (segun decision del equipo)
 [ ] Ronda 3: ensayo de la defensa oral
 
 REGISTRO DE AVANCES
@@ -37,4 +39,46 @@ Bloqueos o dudas:
 
 ENTRADAS
 -----------------------------------------------------------------------
+>>> ENTRADA
 
+Fecha: 15/11/2026
+
+Que hice:
+- Implemente persistencia de pedidos utilizando PostgreSQL mediante pg.
+- Configure la conexion mediante DATABASE_URL.
+- Implemente almacenamiento en memoria cuando DATABASE_URL no existe.
+- Configure la creacion automatica de la tabla pedidos.
+- Implemente las operaciones para crear, consultar y listar pedidos pendientes.
+- Implemente PATCH /api/pedidos/:numero para marcar pedidos como listos.
+- Incorpore validaciones y manejo de errores.
+- Mejore el tipado de las filas de PostgreSQL.
+- Realice pruebas de persistencia y comunicacion entre dos instancias Express.
+- Construí y probe la imagen Docker conectada a PostgreSQL.
+
+Archivos que toque:
+- src/pedidos.ts
+- src/app.ts
+- src/server.ts
+- package.json
+- package-lock.json
+- avances/02-contenedor.txt
+
+Rama / numero de PR:
+avance/brissvey-ronda2 / Pendiente de creacion.
+
+Como lo probe:
+- npm run build
+- Pruebas de creacion y consulta de pedidos.
+- Pruebas de PATCH y actualizacion repetida.
+- Pruebas de errores HTTP 400 y 404.
+- Pruebas del almacenamiento en memoria.
+- Pruebas de persistencia en PostgreSQL.
+- Pruebas de comunicacion entre dos nodos.
+- Construccion de imagen Docker.
+- Ejecucion del contenedor y healthcheck.
+- Prueba de conexion entre Docker y PostgreSQL.
+
+Bloqueos o dudas:
+- Pendiente integrar la implementacion con el docker-compose.yml oficial del equipo, a cargo de Juan.
+
+<<<

@@ -1,11 +1,17 @@
+
 import express from 'express';
 import cors from 'cors';
 import { platosDelDia } from './data';
-import { crearPedido, buscarPedido, pedidosPendientes } from './pedidos';
+import {
+  crearPedido,
+  buscarPedido,
+  pedidosPendientes,
+  marcarPedidoListo,
+} from './pedidos';
 
 export const NODE_ID = process.env.NODE_ID ?? 'local';
 
-// Límites de validación (iguales a los de la interfaz web).
+// Límites de validación.
 const MAX_CANTIDAD_POR_PLATO = 20;
 const MAX_LINEAS_POR_PEDIDO = 20;
 const MAX_LARGO_CLIENTE = 60;
@@ -18,8 +24,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 app.use(express.json());
 
-// Todas las rutas viven en un router. La ruta oficial es /api/... (la que reenvía Apache).
-// Se monta también sin prefijo para el balanceador Nginx, el health check de Docker y las pruebas de carga.
+// Router de la API.
 const api = express.Router();
 
 // Health check
@@ -37,23 +42,31 @@ api.get('/menu', (_req, res) => {
 });
 
 // Crear pedido
-api.post('/pedidos', (req, res) => {
+api.post('/pedidos', async (req, res) => {
   const { cliente, items } = req.body ?? {};
 
   if (typeof cliente !== 'string' || !cliente.trim()) {
-    return res.status(400).json({ error: 'El nombre del cliente es obligatorio' });
+    return res.status(400).json({
+      error: 'El nombre del cliente es obligatorio',
+    });
   }
 
   if (cliente.trim().length > MAX_LARGO_CLIENTE) {
-    return res.status(400).json({ error: `El nombre no puede tener más de ${MAX_LARGO_CLIENTE} caracteres` });
+    return res.status(400).json({
+      error: `El nombre no puede tener más de ${MAX_LARGO_CLIENTE} caracteres`,
+    });
   }
 
   if (!Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ error: 'El pedido debe incluir al menos un plato' });
+    return res.status(400).json({
+      error: 'El pedido debe incluir al menos un plato',
+    });
   }
 
   if (items.length > MAX_LINEAS_POR_PEDIDO) {
-    return res.status(400).json({ error: `El pedido no puede tener más de ${MAX_LINEAS_POR_PEDIDO} líneas` });
+    return res.status(400).json({
+      error: `El pedido no puede tener más de ${MAX_LINEAS_POR_PEDIDO} líneas`,
+    });
   }
 
   const itemsValidos = items.every(
@@ -62,7 +75,7 @@ api.post('/pedidos', (req, res) => {
       typeof item === 'object' &&
       Number.isInteger(item.platoId) &&
       Number.isInteger(item.cantidad) &&
-      item.cantidad > 0 &&
+      item.cantidad >= 1 &&
       item.cantidad <= MAX_CANTIDAD_POR_PLATO
   );
 
@@ -73,36 +86,96 @@ api.post('/pedidos', (req, res) => {
   }
 
   try {
-    const pedido = crearPedido(cliente.trim(), items);
+    const pedido = await crearPedido(cliente.trim(), items);
     return res.status(201).json({ node: NODE_ID, pedido });
-  } catch (e) {
-    return res.status(400).json({
-      error: (e as Error).message,
-    });
+  } catch (error) {
+    const mensaje = (error as Error).message;
+
+    if (mensaje.startsWith('Plato ')) {
+      return res.status(400).json({ error: mensaje });
+    }
+
+    console.error('Error al crear pedido:', error);
+    return res.status(500).json({ error: 'Error interno al crear el pedido' });
   }
 });
 
 // Consultar un pedido
-api.get('/pedidos/:numero', (req, res) => {
+api.get('/pedidos/:numero', async (req, res) => {
   const numero = Number(req.params.numero);
 
   if (!Number.isInteger(numero) || numero <= 0) {
-    return res.status(400).json({ error: 'Número de pedido inválido' });
+    return res.status(400).json({
+      error: 'Número de pedido inválido',
+    });
   }
 
-  const pedido = buscarPedido(numero);
+  try {
+    const pedido = await buscarPedido(numero);
 
-  if (!pedido) {
-    return res.status(404).json({ error: 'Pedido no encontrado' });
+    if (!pedido) {
+      return res.status(404).json({
+        error: 'Pedido no encontrado',
+      });
+    }
+
+    return res.json({ node: NODE_ID, pedido });
+  } catch (error) {
+    console.error('Error al consultar pedido:', error);
+    return res.status(500).json({
+      error: 'Error interno al consultar el pedido',
+    });
+  }
+});
+
+// Marcar un pedido como listo
+api.patch('/pedidos/:numero', async (req, res) => {
+  const numero = Number(req.params.numero);
+  const { estado } = req.body ?? {};
+
+  if (!Number.isInteger(numero) || numero <= 0) {
+    return res.status(400).json({
+      error: 'Número de pedido inválido',
+    });
   }
 
-  return res.json({ node: NODE_ID, pedido });
+  if (estado !== 'listo') {
+    return res.status(400).json({
+      error: 'El estado debe ser listo',
+    });
+  }
+
+  try {
+    const pedido = await marcarPedidoListo(numero);
+
+    if (!pedido) {
+      return res.status(404).json({
+        error: 'Pedido no encontrado',
+      });
+    }
+
+    return res.status(200).json({ node: NODE_ID, pedido });
+  } catch (error) {
+    console.error('Error al marcar pedido como listo:', error);
+    return res.status(500).json({
+      error: 'Error interno al actualizar el pedido',
+    });
+  }
 });
 
-// Vista de cocina
-api.get('/cocina', (_req, res) => {
-  res.json({ node: NODE_ID, pendientes: pedidosPendientes() });
+// Vista de cocina: solamente pedidos pendientes.
+api.get('/cocina', async (_req, res) => {
+  try {
+    const pendientes = await pedidosPendientes();
+    return res.json({ node: NODE_ID, pendientes });
+  } catch (error) {
+    console.error('Error al consultar cocina:', error);
+    return res.status(500).json({
+      error: 'Error interno al consultar los pedidos pendientes',
+    });
+  }
 });
 
+// Rutas oficiales y compatibilidad con Nginx.
 app.use('/api', api);
 app.use('/', api);
