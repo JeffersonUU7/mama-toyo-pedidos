@@ -25,6 +25,9 @@ function numeroDePedido(valor: string): number | null {
 
 export const app = express();
 
+// No revelar el framework en las respuestas.
+app.disable('x-powered-by');
+
 if (process.env.NODE_ENV !== 'production') {
   app.use(cors());
 }
