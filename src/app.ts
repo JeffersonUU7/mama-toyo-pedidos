@@ -16,6 +16,13 @@ const MAX_CANTIDAD_POR_PLATO = 20;
 const MAX_LINEAS_POR_PEDIDO = 20;
 const MAX_LARGO_CLIENTE = 60;
 
+// Solo dígitos: Number() aceptaría "1e3", "0x10" o "Infinity".
+function numeroDePedido(valor: string): number | null {
+  if (!/^\d+$/.test(valor)) return null;
+  const numero = Number(valor);
+  return Number.isSafeInteger(numero) && numero > 0 ? numero : null;
+}
+
 export const app = express();
 
 if (process.env.NODE_ENV !== 'production') {
@@ -102,9 +109,9 @@ api.post('/pedidos', async (req, res) => {
 
 // Consultar un pedido
 api.get('/pedidos/:numero', async (req, res) => {
-  const numero = Number(req.params.numero);
+  const numero = numeroDePedido(req.params.numero);
 
-  if (!Number.isInteger(numero) || numero <= 0) {
+  if (numero === null) {
     return res.status(400).json({
       error: 'Número de pedido inválido',
     });
@@ -130,10 +137,10 @@ api.get('/pedidos/:numero', async (req, res) => {
 
 // Marcar un pedido como listo
 api.patch('/pedidos/:numero', async (req, res) => {
-  const numero = Number(req.params.numero);
+  const numero = numeroDePedido(req.params.numero);
   const { estado } = req.body ?? {};
 
-  if (!Number.isInteger(numero) || numero <= 0) {
+  if (numero === null) {
     return res.status(400).json({
       error: 'Número de pedido inválido',
     });
