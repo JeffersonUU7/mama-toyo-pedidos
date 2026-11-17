@@ -40,15 +40,19 @@ Se utilizará Grafana k6 debido a las siguientes características:
 
 ## 5. Alcance de las pruebas
 
-Las pruebas estarán orientadas a evaluar los servicios web del proyecto.
+Las pruebas estarán orientadas a evaluar los servicios web del proyecto (API).
 
-Se consideran los siguientes componentes:
+**Importante:** El puerto `:8080` (Nginx balanceador) **solo expone la API** (`/api/health`, `/api/menu`, `/api/pedidos`, `/api/cocina`, `/api/pedidos/:numero` PATCH). No sirve la interfaz web (`web/`). La interfaz se sirve por Apache en `:8443` (Fase 2) o por los Apache por nodo (Decisión 2, etapa 2, pendiente). Las pruebas de carga se ejecutan contra la API directamente.
 
-- Servicio principal de Node.js.
-- Endpoint de comprobación de salud `/health`.
-- Consulta del menú.
-- Registro y procesamiento de pedidos.
-- Disponibilidad del sistema cuando aumenta el tráfico.
+Se consideran los siguientes endpoints:
+
+- Endpoint de comprobación de salud `/health` (también `/api/health`)
+- Consulta del menú `/api/menu`
+- Registro y procesamiento de pedidos `/api/pedidos` (POST)
+- Consulta de pedido `/api/pedidos/:numero` (GET)
+- Marcar pedido como listo `/api/pedidos/:numero` (PATCH)
+- Vista de cocina `/api/cocina` (GET)
+- Disponibilidad del sistema cuando aumenta el tráfico
 
 Los endpoints definitivos del menú y los pedidos se confirmarán con el equipo cuando estén implementados.
 
@@ -117,6 +121,14 @@ Se utilizarán:
 - Grafana k6.
 - Navegador web.
 - Terminal Git Bash.
+
+**Comando para levantar el entorno de pruebas (clúster con PostgreSQL):**
+
+```bash
+docker compose up --build   # levanta Nginx (:8080), app1, app2, db
+```
+
+Las pruebas de carga se ejecutan contra `http://localhost:8080/api/...` (sin interfaz web).
 
 Las pruebas se realizarán sobre el entorno de desarrollo y no sobre un sistema en producción.
 

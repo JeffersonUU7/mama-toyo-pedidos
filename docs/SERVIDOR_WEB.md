@@ -17,7 +17,7 @@ Se elige **Apache** porque se versiona en el repositorio, lo puede levantar cual
 
 ```
 Navegador --HTTPS 8443--> Apache --(estático)--> carpeta web/
-                                 \--(/api, /health)--> contenedor Express :3000
+                                  \--(/api, /health)--> contenedor Express :3000
 ```
 
 - Sirve `web/` (la interfaz de Yessica) montada como carpeta de solo lectura.
@@ -34,6 +34,8 @@ docker compose -f apache/docker-compose.apache.yml up --build
 
 Un solo comando levanta Apache y el contenedor Express. Prueba: <https://localhost:8443>
 y <https://localhost:8443/api/menu>. Con curl: `curl -k https://localhost:8443/api/menu`.
+
+**Nota:** Este compose (`apache/docker-compose.apache.yml`) levanta la app **sin `DATABASE_URL`**, por lo que los pedidos se guardan en memoria (se pierden al reiniciar). El clúster completo con PostgreSQL usa `docker-compose.yml` en la raíz.
 
 ## Archivos
 
@@ -65,7 +67,7 @@ Probado en Windows con Docker Desktop, con la app corriendo con `npm run dev`:
 | Prueba | Resultado |
 |---|---|
 | `https://localhost:8443/health` | `{"status":"ok","node":"local"}` |
-| `https://localhost:8443/menu` | Devuelve los 5 platos (proxy a Express en :3000) |
+| `https://localhost:8443/menu` | Devuelve los 10 platos (proxy a Express en :3000) |
 | `https://localhost:8443/` con `web/` vacía | 404 de Apache (esperado: aún no hay `index.html`) |
 | `https://localhost:8443/` con un `index.html` de prueba en `web/` | Apache sirve el HTML estático |
 | `http://localhost:8081` | Redirige a `https://localhost:8443/` |
