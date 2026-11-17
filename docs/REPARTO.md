@@ -21,21 +21,21 @@ El detalle de cada tarea y su registro de avances está en la carpeta `avances/`
 - [x] (3) Página web estática con el menú del día y formulario de pedido (consume `/api/menu` y `/api/pedidos`)
 - [x] (4) Configurar Apache para servir lo estático y reenviar `/api` al contenedor
 - [x] (4) Configurar HTTPS con certificado local (mkcert)
-- [ ] (5) Confirmar con Docker `docker-compose.yml` y `nginx/nginx.conf` (el balanceo y el failover se probaron fuera de Docker)
+- [x] (5) Confirmar con Docker `docker-compose.yml` y `nginx/nginx.conf` (balanceo y failover probados fuera de Docker, y confirmados en Docker por Juan 15/11)
 - [x] (1) Diagrama de arquitectura detallado en `docs/ARQUITECTURA.md`
 - [x] (1) README completo con los pasos para correr el proyecto
 
 ## Entrega 3 – Clase 36 (20 %): demo del clúster con balanceo y base de datos
 
-- [ ] (5) Clúster de 2 nodos balanceado por Nginx funcionando con `docker compose up`, con balanceo y failover confirmados
-- [ ] (5) Servicio `db` (PostgreSQL) en `docker-compose.yml` y `DATABASE_URL` en los nodos (contrato en `docs/DECISIONES.md`, Decisión 1)
-- [ ] (2) Pedidos guardados en PostgreSQL en `src/pedidos.ts` (Decisión 1)
-- [ ] (2) Ruta `PATCH /api/pedidos/:numero` para marcar un pedido como listo (Decisión 5)
-- [ ] (3) Botón "marcar listo" en la vista de cocina
-- [ ] (5) Demostrar el failover con la base de datos
-- [ ] (6) Primeras pruebas de carga (1 y 2 nodos, una de 300 a 400 usuarios virtuales) y resultados en `docs/`
-- [ ] (4) Preparar el Apache por nodo (`apache1` y `apache2`), Decisión 2, etapa 2
-- [ ] (1) Guion de la demo (qué se muestra y quién lo muestra)
+- [x] (5) Clúster de 2 nodos balanceado por Nginx funcionando con `docker compose up`, con balanceo y failover confirmados (Juan, 15/11, PR #12)
+- [x] (5) Servicio `db` (PostgreSQL) en `docker-compose.yml` y `DATABASE_URL` en los nodos (contrato en `docs/DECISIONES.md`, Decisión 1) (Juan, PR #12)
+- [x] (2) Pedidos guardados en PostgreSQL en `src/pedidos.ts` (Decisión 1) (Brissvey, PR #13)
+- [x] (2) Ruta `PATCH /api/pedidos/:numero` para marcar un pedido como listo (Decisión 5) (Brissvey, PR #13)
+- [ ] (3) Botón "marcar listo" en la vista de cocina (Yessica, pendiente)
+- [x] (5) Demostrar el failover con la base de datos (Juan, 15/11: `docker compose stop app1` → sitio responde, pedido visible)
+- [ ] (6) Primeras pruebas de carga (1 y 2 nodos, una de 300 a 400 usuarios virtuales) y resultados en `docs/` (Randal, pendiente)
+- [ ] (4) Preparar el Apache por nodo (`apache1` y `apache2`), Decisión 2, etapa 2 (Josué/Juan, pendiente)
+- [ ] (1) Guion de la demo (qué se muestra y quién lo muestra) (Jefferson, pendiente)
 
 ## Entrega final – Clase 39 (50 %): entrega + defensa
 
