@@ -16,7 +16,17 @@ const MAX_CANTIDAD_POR_PLATO = 20;
 const MAX_LINEAS_POR_PEDIDO = 20;
 const MAX_LARGO_CLIENTE = 60;
 
+// Solo dígitos: Number() aceptaría "1e3", "0x10" o "Infinity".
+function numeroDePedido(valor: string): number | null {
+  if (!/^\d+$/.test(valor)) return null;
+  const numero = Number(valor);
+  return Number.isSafeInteger(numero) && numero > 0 ? numero : null;
+}
+
 export const app = express();
+
+// No revelar el framework en las respuestas.
+app.disable('x-powered-by');
 
 if (process.env.NODE_ENV !== 'production') {
   app.use(cors());
@@ -43,6 +53,12 @@ api.get('/menu', (_req, res) => {
 
 // Crear pedido
 api.post('/pedidos', async (req, res) => {
+  if (!req.is('application/json')) {
+    return res.status(415).json({
+      error: 'El cuerpo debe enviarse con Content-Type: application/json',
+    });
+  }
+
   const { cliente, items } = req.body ?? {};
 
   if (typeof cliente !== 'string' || !cliente.trim()) {
@@ -74,6 +90,7 @@ api.post('/pedidos', async (req, res) => {
       item !== null &&
       typeof item === 'object' &&
       Number.isInteger(item.platoId) &&
+      item.platoId >= 1 &&
       Number.isInteger(item.cantidad) &&
       item.cantidad >= 1 &&
       item.cantidad <= MAX_CANTIDAD_POR_PLATO
@@ -102,9 +119,9 @@ api.post('/pedidos', async (req, res) => {
 
 // Consultar un pedido
 api.get('/pedidos/:numero', async (req, res) => {
-  const numero = Number(req.params.numero);
+  const numero = numeroDePedido(req.params.numero);
 
-  if (!Number.isInteger(numero) || numero <= 0) {
+  if (numero === null) {
     return res.status(400).json({
       error: 'Número de pedido inválido',
     });
@@ -130,10 +147,10 @@ api.get('/pedidos/:numero', async (req, res) => {
 
 // Marcar un pedido como listo
 api.patch('/pedidos/:numero', async (req, res) => {
-  const numero = Number(req.params.numero);
+  const numero = numeroDePedido(req.params.numero);
   const { estado } = req.body ?? {};
 
-  if (!Number.isInteger(numero) || numero <= 0) {
+  if (numero === null) {
     return res.status(400).json({
       error: 'Número de pedido inválido',
     });
@@ -179,3 +196,23 @@ api.get('/cocina', async (_req, res) => {
 // Rutas oficiales y compatibilidad con Nginx.
 app.use('/api', api);
 app.use('/', api);
+
+// Rutas desconocidas: 404 en JSON (la API nunca responde HTML).
+app.use((_req, res) => {
+  res.status(404).json({ error: 'Ruta no encontrada' });
+});
+
+// Errores siempre en JSON (por ejemplo, un body con JSON malformado).
+const manejadorErrores: express.ErrorRequestHandler = (error, _req, res, _next) => {
+  const estado = error.status && error.status >= 400 && error.status < 500 ? error.status : 500;
+
+  if (estado === 500) {
+    console.error('Error no controlado:', error);
+  }
+
+  res.status(estado).json({
+    error: estado === 500 ? 'Error interno del servidor' : 'La solicitud no es válida',
+  });
+};
+
+app.use(manejadorErrores);

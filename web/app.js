@@ -90,8 +90,9 @@ function actualizarResumen() {
     lista.append(li);
   }
   if (cantidades.size === 0) lista.append(el('li', 'empty', 'Aún no has elegido nada.'));
-  $('total').textContent = rango(tMin, tMax);
-  $('nota-total').hidden = rango(tMin, tMax).includes('–') === false;
+  const total = rango(tMin, tMax);
+  $('total').textContent = total;
+  $('nota-total').hidden = !total.includes('–');
   validar();
 }
 

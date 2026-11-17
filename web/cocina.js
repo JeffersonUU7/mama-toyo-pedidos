@@ -14,9 +14,10 @@ async function cargarNombres() {
 async function actualizar() {
   try {
     const { pendientes } = await api('/cocina');
+    const lista = pendientes ?? [];
     $('error').hidden = true;
-    pintar(pendientes || []);
-    $('estado').textContent = `${pendientes.length} pendiente(s) · actualizado ${new Date().toLocaleTimeString('es-SV')} · se refresca cada 5 s`;
+    pintar(lista);
+    $('estado').textContent = `${lista.length} pendiente(s) · actualizado ${new Date().toLocaleTimeString('es-SV')} · se refresca cada 5 s`;
   } catch (e) {
     $('error').textContent = e.message + ' Se reintentará automáticamente.';
     $('error').hidden = false;
