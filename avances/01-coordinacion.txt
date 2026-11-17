@@ -112,3 +112,10 @@ Como lo probe: La Fase 2 la probe con Docker en mi equipo (capturas en
 Bloqueos o dudas: Falta que Juan registre su prueba del cluster con Docker;
   la Ronda 2 depende de eso.
 
+Fecha: 16/11/2026
+Que hice: Actualización completa de la documentación para reflejar el estado real del proyecto (rama docs/actualizacion-documentacion). Sincronicé README, ARQUITECTURA, CONTEXTO_DEL_PROYECTO, DECISIONES, ORDEN_DE_TRABAJO, REPARTO, SERVIDOR_WEB y PRUEBAS_DE_CARGA con lo que hay en main: PostgreSQL implementado (PR #12), PATCH /api/pedidos/:numero implementado (PR #13), cluster con balanceo y failover confirmado por Juan (15/11), 4 pruebas de demo resueltas. Corregí "5 platos" → "10 platos" en SERVIDOR_WEB, aclaré que :8080 solo expone API, marqué decisiones 1/5/Etapa1 como implementadas con evidencia. Agregué nueva entrada en mi avance.
+Archivos que toque: README.md, docs/ARQUITECTURA.md, docs/CONTEXTO_DEL_PROYECTO.txt, docs/DECISIONES.md, docs/ORDEN_DE_TRABAJO.md, docs/REPARTO.md, docs/SERVIDOR_WEB.md, docs/PRUEBAS_DE_CARGA.md, avances/01-coordinacion.txt
+Rama / numero de PR: docs/actualizacion-documentacion (PR hacia main)
+Como lo probe: Verifiqué cada cambio contra git log, avances/ y código real; npm run build y tsc --noEmit OK
+Bloqueos o dudas: Pendiente PR de corrección de bugs (rama fix/bugs-correcciones) y tareas de Ronda 2 no code (botón listo, pruebas carga, guion demo, Apache por nodo).
+
