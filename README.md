@@ -13,7 +13,7 @@ y le da a la cocina una lista de pedidos pendientes. El menú y los precios son 
 flowchart LR
     N["Navegador"] -- "HTTPS :8443" --> A["Apache 2.4<br/>sirve web/ (HTML, CSS, JS)"]
     A -- "ProxyPass /api" --> E["Contenedor Express/TypeScript<br/>:3000"]
-    E --> D[("Menú y pedidos<br/>en memoria")]
+    E --> D[("PostgreSQL<br/>pedidos persistentes")]
 ```
 
 Un solo comando levanta Apache y el contenedor Express (Docker Compose). Apache entrega la interfaz estática de
@@ -68,6 +68,7 @@ Todas las rutas están bajo `/api` (la ruta que reenvía Apache). Cada respuesta
 | `/api/menu` | GET | Los platos del día con su precio mínimo y máximo |
 | `/api/pedidos` | POST | Crea un pedido y devuelve su número de confirmación |
 | `/api/pedidos/:numero` | GET | Consulta un pedido |
+| `/api/pedidos/:numero` | PATCH | Marca un pedido como listo (`{"estado":"listo"}`) |
 | `/api/cocina` | GET | Pedidos pendientes, en orden de llegada |
 
 Las mismas rutas existen también sin el prefijo `/api` (por ejemplo `/health`): las usan el balanceador Nginx, el
@@ -81,7 +82,32 @@ curl -k -X POST https://localhost:8443/api/pedidos \
   -d '{"cliente":"Ana","items":[{"platoId":1,"cantidad":2},{"platoId":10,"cantidad":1}]}'
 ```
 
+Ejemplo de marcar pedido como listo:
+
+```bash
+curl -k -X PATCH https://localhost:8443/api/pedidos/1 \
+  -H "Content-Type: application/json" \
+  -d '{"estado":"listo"}'
+```
+
 El total del pedido se devuelve como rango (`totalMin` y `totalMax`), igual que los precios del menú.
+
+## Clúster (Ronda 2 — en curso)
+
+El repositorio incluye `docker-compose.yml` con Nginx, 2 nodos Express (`app1`, `app2`) y PostgreSQL (`db`).
+El balanceo y failover funcionan; los pedidos se guardan en PostgreSQL compartido.
+
+```bash
+docker compose up --build          # levanta Nginx, app1, app2, db
+```
+
+Entrada por <http://localhost:8080> (solo API, sin interfaz web; ver Decisión 2, etapa 2).
+
+Simular falla de un nodo:
+
+```bash
+docker compose stop app1
+```
 
 ## HTTPS y evidencias
 
@@ -95,11 +121,11 @@ src/                  Contenedor: API Express/TypeScript
 web/                  Interfaz estática (HTML, CSS, JS) que sirve Apache
 apache/               Configuración de Apache (HTTPS + reverse proxy) y su docker-compose
 certs/                Script que genera el certificado (las llaves no se suben)
-nginx/                Configuración del balanceador (Fase 3)
+nginx/                Configuración del balanceador
 docs/                 Arquitectura, decisiones, menú, evidencias y planes
 avances/              Registro de avances de cada integrante
 Dockerfile            Imagen del contenedor Express
-docker-compose.yml    Clúster: 2 nodos + Nginx (Fase 3)
+docker-compose.yml    Clúster: 2 nodos + Nginx + PostgreSQL
 ```
 
 ## Equipo
