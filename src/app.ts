@@ -90,6 +90,7 @@ api.post('/pedidos', async (req, res) => {
       item !== null &&
       typeof item === 'object' &&
       Number.isInteger(item.platoId) &&
+      item.platoId >= 1 &&
       Number.isInteger(item.cantidad) &&
       item.cantidad >= 1 &&
       item.cantidad <= MAX_CANTIDAD_POR_PLATO
