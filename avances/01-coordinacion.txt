@@ -112,3 +112,36 @@ Como lo probe: La Fase 2 la probe con Docker en mi equipo (capturas en
 Bloqueos o dudas: Falta que Juan registre su prueba del cluster con Docker;
   la Ronda 2 depende de eso.
 
+Fecha: 16/11/2026
+Que hice: Cree la rama fix/bugs-correcciones y corregi 12 bugs confirmados
+  (B1-B12), un commit por bug:
+  B1: errores siempre en JSON (un body malformado devolvia HTML con stack).
+  B2: 404 en JSON para rutas desconocidas.
+  B3: :numero solo acepta digitos (1e3, 0x10 e Infinity se rechazan con 400).
+  B4: se desactiva la cabecera X-Powered-By.
+  B5: POST sin application/json responde 415 con mensaje claro.
+  B6: platoId debe ser >= 1 antes de buscar el plato.
+  B7: cocina.js normaliza pendientes (evita TypeError).
+  B8: se simplifica la condicion de la nota del total en app.js.
+  B9: cierre ordenado con SIGTERM/SIGINT (server.close + pool.end).
+  B10: .dockerignore excluye certs, docs, apache, nginx, avances y .github.
+  B11: Nginx ya no expone X-Servido-Por (topologia interna).
+  B12: .gitignore con salto de linea final.
+  B13-B16 quedan fuera por decision de alcance (B13 es arquitectura Etapa 2,
+  B14 es tarea de interfaz de Yessica, B15 cambia el diseno de Fase 2,
+  B16 son mejoras de config para Ronda 3).
+Archivos que toque: src/app.ts, src/server.ts, src/pedidos.ts, web/app.js,
+  web/cocina.js, nginx/nginx.conf, .dockerignore, .gitignore,
+  avances/01-coordinacion.txt
+Rama / numero de PR: fix/bugs-correcciones (PR hacia main)
+Como lo probe: npm run build OK; smoke tests con curl (JSON malformado -> 400
+  JSON sin stack, ruta inexistente -> 404 JSON, 1e3/0x10/Infinity -> 400,
+  sin X-Powered-By, text/plain -> 415, platoId 0/-3 -> 400, flujo crear/
+  consultar/PATCH/cocina -> 200/201); node --check en los JS; docker build OK;
+  nginx -t OK con nginx:1.27-alpine; docker compose config OK; demo real del
+  cluster: 4 servicios healthy, balanceo nodo-1/nodo-2, pedido consultado 10
+  veces con 200, PATCH entre nodos, failover con stop app1, persistencia tras
+  down/up.
+Bloqueos o dudas: Ninguno. B13-B16 siguen pendientes para la Ronda 3 o para
+  los responsables de cada area.
+
