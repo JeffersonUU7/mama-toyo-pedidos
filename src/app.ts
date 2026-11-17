@@ -180,6 +180,11 @@ api.get('/cocina', async (_req, res) => {
 app.use('/api', api);
 app.use('/', api);
 
+// Rutas desconocidas: 404 en JSON (la API nunca responde HTML).
+app.use((_req, res) => {
+  res.status(404).json({ error: 'Ruta no encontrada' });
+});
+
 // Errores siempre en JSON (por ejemplo, un body con JSON malformado).
 const manejadorErrores: express.ErrorRequestHandler = (error, _req, res, _next) => {
   const estado = error.status && error.status >= 400 && error.status < 500 ? error.status : 500;
