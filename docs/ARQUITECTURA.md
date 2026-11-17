@@ -6,17 +6,18 @@
 flowchart LR
     N["Navegador"] -- "HTTPS :8443" --> A["Apache 2.4<br/>sirve web/ (HTML, CSS, JS)"]
     A -- "ProxyPass /api" --> E["Contenedor Express/TypeScript<br/>:3000"]
-    E --> D[("Menú y pedidos<br/>en memoria")]
+    E --> D[("PostgreSQL<br/>pedidos persistentes")]
 ```
 
 Todo corre en Docker Compose (`apache/docker-compose.apache.yml`), con un solo comando.
+El contenedor Express usa PostgreSQL si existe `DATABASE_URL`; si no, usa memoria (para `npm run dev`).
 
 | Pieza | Qué hace | Puerto | Dónde está |
 |---|---|---|---|
 | Navegador | Muestra la interfaz y llama a la API con `fetch('/api/...')` | | |
 | Apache 2.4 | Entrega el HTML, CSS y JS de `web/`, termina el HTTPS y reenvía `/api` al contenedor | 8443 (HTTPS), 8081 (redirige a HTTPS) | `apache/httpd.conf` |
-| Contenedor Express/TypeScript | La API del comedor: menú, pedidos y cocina | 3000 (solo dentro de la red de Docker) | `src/`, `Dockerfile` |
-| Datos | Menú y pedidos, guardados en la memoria del contenedor | | `src/data.ts`, `src/pedidos.ts` |
+| Contenedor Express/TypeScript | La API del comedor: menú, pedidos, cocina y marcar listo | 3000 (solo dentro de la red de Docker) | `src/`, `Dockerfile` |
+| Datos | Menú en `src/data.ts`; pedidos en PostgreSQL (o memoria si no hay `DATABASE_URL`) | | `src/data.ts`, `src/pedidos.ts` |
 
 ## Qué pasa cuando un cliente hace un pedido
 
@@ -25,8 +26,11 @@ Todo corre en Docker Compose (`apache/docker-compose.apache.yml`), con un solo c
    la reenvía a `http://app:3000/api/menu`, al contenedor Express.
 3. Express responde con el menú en JSON. Apache lo devuelve al navegador, que lo muestra.
 4. El cliente arma su pedido y la página envía `POST /api/pedidos`. Express valida los datos, calcula el total
-   (como rango, porque los precios del comedor son un mínimo y un máximo), guarda el pedido y devuelve su número.
+   (como rango, porque los precios del comedor son un mínimo y un máximo), guarda el pedido en PostgreSQL
+   y devuelve su número.
 5. La cocina abre `cocina.html`, que consulta `GET /api/cocina` cada 5 segundos para ver los pedidos pendientes.
+6. Cuando la cocina prepara un pedido, envía `PATCH /api/pedidos/:numero` con `{"estado":"listo"}`.
+   El pedido desaparece de la vista de cocina y queda marcado como listo en la base de datos.
 
 ## Seguridad
 
@@ -37,7 +41,37 @@ Todo corre en Docker Compose (`apache/docker-compose.apache.yml`), con un solo c
 - El contenedor Express no se publica al exterior: solo Apache puede llegar a él.
 - La API valida los datos de entrada (cantidad de 1 a 20 por plato, hasta 20 líneas, nombre de hasta 60 caracteres).
 
-## Fases 3 y 4: arquitectura objetivo
+## Clúster: estado actual (Ronda 2 — en curso)
+
+El repositorio ya incluye `docker-compose.yml` con:
+
+- **Nginx** (`nginx:1.27-alpine`) en el puerto 8080 como balanceador (round-robin con `zone` compartida)
+- **2 nodos Express** (`app1`, `app2`) con `NODE_ID=nodo-1|nodo-2` y `DATABASE_URL` apuntando a PostgreSQL
+- **PostgreSQL 16** (`postgres:16-alpine`) con volumen `pgdata` y healthcheck `pg_isready`
+
+```mermaid
+flowchart LR
+    N["Navegador"] -- "HTTP :8080" --> NG["Nginx<br/>balanceador"]
+    NG --> E1["Express 1<br/>nodo-1"]
+    NG --> E2["Express 2<br/>nodo-2"]
+    E1 --> DB[("PostgreSQL")]
+    E2 --> DB
+```
+
+**Qué funciona hoy en el clúster:**
+
+- `docker compose up --build` levanta los 4 servicios sanos (`docker compose ps` → healthy)
+- Balanceo round-robin: el campo `node` alterna entre `nodo-1` y `nodo-2`
+- Failover: `docker compose stop app1` → el sitio sigue respondiendo por `app2`
+- Persistencia: `docker compose down` (sin `-v`) y `up` → los pedidos siguen existiendo
+
+**Qué falta para la demo de la Clase 36:**
+
+- Botón "Marcar listo" en `cocina.html` (ruta `PATCH` ya existe en la API)
+- Pruebas de carga con k6 (1 y 2 nodos, 300–400 usuarios virtuales)
+- Guion de demo y registro de las 4 pruebas en los avances
+
+## Fases 3 y 4: arquitectura objetivo (Decisión 2)
 
 ```mermaid
 flowchart LR
@@ -51,4 +85,10 @@ flowchart LR
 - **PostgreSQL** guarda los pedidos fuera de los nodos, para que los dos nodos vean los mismos pedidos.
 - Se construye por etapas. Los detalles y el plan alternativo están en [DECISIONES.md](DECISIONES.md).
 
-Hoy ya existe `docker-compose.yml` con Nginx y 2 nodos Express (el trabajo de la Fase 3 en curso).
+**Etapas (Decisión 2):**
+
+1. ✅ **Etapa 1 (Clase 36).** Nginx balancea los dos Express, que ya existen, y se agrega PostgreSQL. La interfaz se sigue viendo con el Apache independiente (`apache/docker-compose.apache.yml`). **Hecho.**
+2. ⬜ **Etapa 2 (antes de la Clase 39).** Cada nodo tiene su Apache, que sirve `web/` y reenvía a su Express. Nginx balancea hacia los Apache. Responsables: Josué y Juan.
+3. ⬜ **Etapa 3 (Clase 37).** HTTPS en Nginx con un certificado autofirmado de `certs/`. Nginx habla por HTTPS con los Apache. Responsable: Josué.
+
+**Plan B si no alcanza el tiempo** (propuesta de Josué): Apache delante de Nginx. Se cambia el `ProxyPass` a `http://nginx:80` y se unen ambos compose a la misma red. Funciona con pocos cambios, pero el balanceador deja de ser la entrada y Apache pasa a ser un punto único de falla. La coordinación decide si se usa al terminar la Clase 36.

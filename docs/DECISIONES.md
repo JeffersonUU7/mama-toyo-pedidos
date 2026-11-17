@@ -3,7 +3,7 @@
 Estas decisiones las tomó la coordinación (Jefferson) el 09/11/2026 y aplican a todo el equipo.
 Si alguien ve un problema serio con alguna, lo avisa por el grupo antes de cambiarla por su cuenta.
 
-## Decisión 1: los pedidos se guardan en PostgreSQL
+## Decisión 1: los pedidos se guardan en PostgreSQL ✅ IMPLEMENTADA
 
 **Problema.** Hoy los pedidos viven en la memoria de cada nodo. Con 2 nodos, un pedido creado en `nodo-1`
 no existe en `nodo-2`: el cliente consulta su pedido y a veces le sale "no encontrado", y `/cocina` muestra
@@ -45,6 +45,12 @@ Un archivo compartido es frágil con escrituras simultáneas.
 **Límite que se declara en la defensa.** La base de datos es una sola y no se replica, así que es un punto único
 de falla. La alta disponibilidad de este proyecto cubre la capa de aplicación.
 
+**Estado (15/11/2026):**
+- ✅ Servicio `db` en `docker-compose.yml` (Juan, PR #12)
+- ✅ Persistencia en `src/pedidos.ts` con `pg` y `Number()` (Brissvey, PR #13)
+- ✅ Tabla creada al arrancar, memoria si no hay `DATABASE_URL`
+- ✅ Balanceo y failover con pedidos compartidos confirmados (Juan, `avances/05-cluster-nginx.txt`)
+
 ## Decisión 2: Nginx al frente, y Apache en cada nodo
 
 ```
@@ -56,11 +62,11 @@ Cliente --HTTPS--> Nginx --HTTPS--> Apache 1 --> Express 1 --\
 balanceador (Nginx), como pide el alcance del proyecto. Y cada nodo repite lo trabajado en las Unidades 1 y 2.
 
 **Se construye por etapas, para que cada una se pueda demostrar:**
-1. **Etapa 1 (Clase 36).** Nginx balancea los dos Express, que ya existen, y se agrega PostgreSQL. Mientras tanto la
-   interfaz se sigue viendo con el Apache independiente (`apache/docker-compose.apache.yml`).
-2. **Etapa 2 (antes de la Clase 39).** Cada nodo tiene su Apache, que sirve `web/` y reenvía a su Express. Nginx
+1. ✅ **Etapa 1 (Clase 36).** Nginx balancea los dos Express, que ya existen, y se agrega PostgreSQL. Mientras tanto la
+   interfaz se sigue viendo con el Apache independiente (`apache/docker-compose.apache.yml`). **IMPLEMENTADA** (Juan, PR #12).
+2. ⬜ **Etapa 2 (antes de la Clase 39).** Cada nodo tiene su Apache, que sirve `web/` y reenvía a su Express. Nginx
    balancea hacia los Apache. Responsables: Josué y Juan.
-3. **Etapa 3 (Clase 37).** HTTPS en Nginx con un certificado autofirmado de `certs/`. Nginx habla por HTTPS con los
+3. ⬜ **Etapa 3 (Clase 37).** HTTPS en Nginx con un certificado autofirmado de `certs/`. Nginx habla por HTTPS con los
    Apache. Responsable: Josué.
 
 **Plan B si no alcanza el tiempo** (propuesta de Josué): Apache delante de Nginx. Se cambia el `ProxyPass` a
@@ -79,11 +85,16 @@ Los precios de `docs/MENU.md` son los del comedor, verificados en el local. Se m
 (`precioMin` y `precioMax`) y el total del pedido se muestra como rango. Ya está implementado en `src/data.ts`,
 `src/pedidos.ts` y en la interfaz.
 
-## Decisión 5: marcar un pedido como listo
+## Decisión 5: marcar un pedido como listo ✅ IMPLEMENTADA (API)
 
 Sí, pero después de la persistencia. Ruta `PATCH /api/pedidos/:numero` con `{"estado":"listo"}`. Responde 200 con `{node, pedido}`; 404 si el pedido
 no existe; 400 si el número es inválido o el estado no es `listo`. Repetirla sobre un pedido ya listo no da error.
 `/api/cocina` muestra solo los pendientes. Brissvey hace la ruta y Yessica el botón en `cocina.html`. Si el tiempo no alcanza, no entra en la demo de la Clase 36.
+
+**Estado (15/11/2026):**
+- ✅ Ruta `PATCH /api/pedidos/:numero` implementada en `src/app.ts` (Brissvey, PR #13)
+- ✅ Validaciones: 404 si no existe, 400 si número inválido o estado ≠ "listo", 200 si ya está listo (idempotente)
+- ⬜ Botón "Marcar listo" en `cocina.html` (Yessica, pendiente)
 
 ## Límites de validación (ya aplicados en la API)
 
