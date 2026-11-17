@@ -179,3 +179,18 @@ api.get('/cocina', async (_req, res) => {
 // Rutas oficiales y compatibilidad con Nginx.
 app.use('/api', api);
 app.use('/', api);
+
+// Errores siempre en JSON (por ejemplo, un body con JSON malformado).
+const manejadorErrores: express.ErrorRequestHandler = (error, _req, res, _next) => {
+  const estado = error.status && error.status >= 400 && error.status < 500 ? error.status : 500;
+
+  if (estado === 500) {
+    console.error('Error no controlado:', error);
+  }
+
+  res.status(estado).json({
+    error: estado === 500 ? 'Error interno del servidor' : 'La solicitud no es válida',
+  });
+};
+
+app.use(manejadorErrores);
