@@ -53,6 +53,12 @@ api.get('/menu', (_req, res) => {
 
 // Crear pedido
 api.post('/pedidos', async (req, res) => {
+  if (!req.is('application/json')) {
+    return res.status(415).json({
+      error: 'El cuerpo debe enviarse con Content-Type: application/json',
+    });
+  }
+
   const { cliente, items } = req.body ?? {};
 
   if (typeof cliente !== 'string' || !cliente.trim()) {
