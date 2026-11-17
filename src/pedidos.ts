@@ -188,3 +188,8 @@ export async function marcarPedidoListo(
   pedido.estado = 'listo';
   return pedido;
 }
+
+// Cerrar el pool de PostgreSQL al apagar el proceso.
+export async function cerrarPedidos(): Promise<void> {
+  if (pool) await pool.end();
+}
