@@ -41,13 +41,13 @@ ENTRADAS
 Fecha: 07/11/2026
 Que hice: Elegi Apache (justificado en docs/SERVIDOR_WEB.md), configure el proxy a :3000, la redireccion a HTTPS y el certificado autofirmado (CA:FALSE). Documente la decision, el uso y las pruebas.
 Archivos que toque: apache/httpd.conf, apache/docker-compose.apache.yml, certs/generar-certificado.sh, docs/SERVIDOR_WEB.md, .gitignore
-Rama / numero de PR: avance/josue-servidor-apache / #(numero de tu primer PR)
+Rama / numero de PR: avance/josue-servidor-apache / #(numero de tu primer PR es #1)
 Como lo probe: en el navegador, https://localhost:8443/health y /menu responden por HTTPS; Apache sirvio un index.html de prueba en web/ (ya eliminado); http://localhost:8081 redirige a HTTPS.
 Bloqueos o dudas: ninguno.
 
 Fecha: 18/11/2026
 Que hice: Agregue apache1 y apache2 al cluster (Decision 2, etapa 2). Cada uno sirve web/ y reenvia /api y /health al Express de su nodo (variable BACKEND). Nginx ahora balancea hacia los dos Apache. Config nueva: apache/httpd-nodo.conf (solo HTTP; el HTTPS va en la etapa 3). Corregi un fallo del failover: con app1 detenido, Apache responde 500 (no 503) porque Docker quita el nombre app1 de la red y falla el DNS; Nginx no reintentaba los 500. Agregue http_500 a proxy_next_upstream.
 Archivos que toque: apache/httpd-nodo.conf, docker-compose.yml, nginx/nginx.conf
-Rama / numero de PR: avance/josue-apache-cluster / #(numero de este PR)
+Rama / numero de PR: avance/josue-apache-cluster / #(numero de este PR es #16)
 Como lo probe: docker compose up --build; en http://localhost:8080 carga la interfaz y /api/menu alterna nodo-1 y nodo-2. Con docker compose stop app1, 20 peticiones a /api/menu dieron 9 errores 500 antes del arreglo y 20 respuestas 200 despues. Tambien probe docker compose stop apache1: el sitio sigue respondiendo.
 Bloqueos o dudas: Nginx no reintenta peticiones POST en otro nodo (para no duplicar pedidos), asi que un pedido que caiga justo en el nodo caido puede fallar una vez antes de que Nginx lo saque del balanceo. El health check de Nginx es pasivo (Decision 3).
