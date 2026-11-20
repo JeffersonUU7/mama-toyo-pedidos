@@ -15,7 +15,7 @@ TAREAS (cambia [ ] por [x] cuando las termines)
 [x] Registro: completar mis datos en este archivo y abrir mi primer PR
 [x] Ronda 1: elegir la herramienta de pruebas de carga y justificar la eleccion
 [x] Ronda 1: escribir el plan de pruebas en docs/PRUEBAS_DE_CARGA.md
-[ ] Ronda 2: correr las primeras pruebas de carga y guardar los resultados
+[x] Ronda 2: correr las primeras pruebas de carga y guardar los resultados
 [ ] Ronda 3: aplicar seguridad y monitoreo (temas de la Clase 37)
 [ ] Ronda 3: validar el dimensionamiento (demanda pico 300, capacidad por nodo 400) con pruebas reales
 [ ] Ronda 3: ensayo de la defensa oral
@@ -44,3 +44,35 @@ Archivos que toque: docs/PRUEBAS_DE_CARGA.md, avances/06-pruebas-monitoreo.txt
 Rama / numero de PR: avance/randal-registro (PR #6)
 Como lo probe: Revisé la estructura del documento, la justificación de la herramienta y los escenarios de pruebas propuestos.
 Bloqueos o dudas: Pendiente ejecutar las pruebas reales y confirmar los endpoints disponibles.
+
+
+
+Fecha: 19/11/2026 - 20/11/2026
+
+Que hice: Ejecuté las primeras pruebas de carga y monitoreo utilizando Grafana k6. Realicé pruebas de disponibilidad, consulta del menú, creación, 
+consulta y actualización de pedidos, así como validaciones de datos incorrectos. Comprobé el funcionamiento de los dos nodos, el balanceo de carga, 
+la conexión con PostgreSQL y la continuidad del servicio cuando uno de los nodos dejó de funcionar. También ejecuté pruebas de 
+carga progresiva hasta alcanzar 300 usuarios virtuales. Los resultados obtenidos mostraron un 100% de verificaciones exitosas en las pruebas 
+compartidas y tiempos de respuesta inferiores a los umbrales establecidos en las pruebas de 5 usuarios.
+
+Archivos que toque:
+- docs/PRUEBAS_DE_CARGA.md
+- avances/06-pruebas-monitoreo.txt
+
+Archivos que agregue:
+- docs/pruebas/scripts/health.js
+- docs/pruebas/scripts/menu.js
+- docs/pruebas/scripts/pedidos.js
+- docs/pruebas/resultados/baseline-health-5vus.json
+- docs/pruebas/resultados/menu-5vus.json
+- docs/pruebas/resultados/menu-repeticion-5vus.json
+- docs/pruebas/resultados/pedidos-5vus.json
+- docs/pruebas/resultados/consulta-5vus.json
+- docs/pruebas/resultados/actualizar-5vus.json
+- docs/pruebas/resultados/carga-progresiva.json
+
+Rama / numero de PR: avance/randal-registro (PR #6).
+Como lo probe: Ejecuté los scripts de k6, consulté los endpoints mediante PowerShell, verifiqué los registros directamente en PostgreSQL, 
+revisé los contenedores y sus logs con Docker Compose y comprobé la disponibilidad del sistema al detener y reiniciar uno de los nodos.
+Bloqueos o dudas: Quedó pendiente la tercera parte del trabajo, correspondiente a la aplicación de seguridad y monitoreo, 
+la validación definitiva del dimensionamiento para una demanda pico de 300 usuarios y la preparación de la defensa oral.

@@ -153,3 +153,47 @@ Mediante este plan se establece una metodología para evaluar el rendimiento del
 La utilización de Grafana k6 permitirá identificar cómo responde la aplicación ante diferentes niveles de tráfico y detectar posibles problemas que puedan afectar la experiencia de los usuarios.
 
 Los resultados obtenidos servirán para proponer mejoras y comprobar la estabilidad del sistema.
+
+
+
+
+## 12. Primera prueba de referencia (Baseline)
+
+**Fecha:** 19/11/2026
+
+**Herramienta:** Grafana k6
+
+**Endpoint evaluado:** GET `/api/health`
+
+**Configuración:**
+- Usuarios virtuales: 5.
+- Duración: 1 minuto.
+- Infraestructura: Nginx con dos nodos de aplicación.
+- Destino: `http://localhost:8080` (acceso desde el contenedor mediante `host.docker.internal`).
+
+**Resultados obtenidos en la primera ejecución:**
+
+| Métrica | Resultado |
+|---|---:|
+| Solicitudes HTTP | 300 |
+| Iteraciones completadas | 300 |
+| Checks correctos | 900 (100%) |
+| Tiempo promedio | 8.4 ms |
+| Mediana | 5.84 ms |
+| p90 | 12.33 ms |
+| p95 | 24.11 ms |
+| Tiempo máximo | 71.08 ms |
+| Solicitudes fallidas | 0 (0%) |
+| Solicitudes por segundo | 4.95 |
+
+**Evaluación:**
+
+La primera prueba de referencia finalizó correctamente. Todas las solicitudes HTTP fueron procesadas sin errores y las tres validaciones configuradas en k6 se cumplieron en cada iteración.
+
+El percentil 95 fue de 24.11 ms, inferior al objetivo establecido de 500 ms. El porcentaje de solicitudes fallidas fue del 0%, cumpliendo el límite máximo del 1%.
+
+Los resultados muestran un comportamiento satisfactorio del endpoint de salud con cinco usuarios virtuales.
+
+**Limitación:** esta prueba evalúa exclusivamente el endpoint de salud. No permite concluir todavía cuál es la capacidad máxima del sistema ni el rendimiento de las operaciones que utilizan PostgreSQL.
+
+**Evidencia:** `docs/pruebas/resultados/baseline-health-5vus.json` (archivo de resultados de la ejecución guardada).
