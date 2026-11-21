@@ -1,0 +1,164 @@
+{
+    "metrics": {
+        "http_req_sending": {
+            "max": 0.343934,
+            "p(90)": 0.03713,
+            "p(95)": 0.053411050000000015,
+            "avg": 0.025219819999999993,
+            "min": 0.008487,
+            "med": 0.019357
+        },
+        "http_reqs": {
+            "count": 300,
+            "rate": 4.96187430761549
+        },
+        "http_req_connecting": {
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.03638400666666666,
+            "min": 0,
+            "med": 0,
+            "max": 2.796503
+        },
+        "iteration_duration": {
+            "p(95)": 1014.5728819000001,
+            "avg": 1007.6316839766671,
+            "min": 1003.65254,
+            "med": 1006.3833910000001,
+            "max": 1030.615425,
+            "p(90)": 1011.3652416
+        },
+        "http_req_duration": {
+            "min": 2.96768,
+            "med": 5.3160105,
+            "max": 24.970979,
+            "p(90)": 10.1082905,
+            "p(95)": 13.626246050000002,
+            "avg": 6.488233576666667,
+            "thresholds": {
+                "p(95)<500": false
+            }
+        },
+        "http_req_waiting": {
+            "max": 24.866794,
+            "p(90)": 9.987292700000001,
+            "p(95)": 13.414046650000003,
+            "avg": 6.345558243333336,
+            "min": 2.875641,
+            "med": 5.175585
+        },
+        "vus": {
+            "value": 5,
+            "min": 5,
+            "max": 5
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 300,
+            "thresholds": {
+                "rate<0.01": false
+            },
+            "value": 0
+        },
+        "http_req_receiving": {
+            "avg": 0.11745551333333336,
+            "min": 0.030169,
+            "med": 0.1091165,
+            "max": 0.393639,
+            "p(90)": 0.19195710000000002,
+            "p(95)": 0.21420710000000007
+        },
+        "iterations": {
+            "rate": 4.96187430761549,
+            "count": 300
+        },
+        "data_sent": {
+            "count": 26700,
+            "rate": 441.6068133777786
+        },
+        "http_req_tls_handshaking": {
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "checks": {
+            "passes": 1500,
+            "fails": 0,
+            "thresholds": {
+                "rate>0.99": false
+            },
+            "value": 1
+        },
+        "http_req_blocked": {
+            "max": 6.473845,
+            "p(90)": 0.011835,
+            "p(95)": 0.014127000000000004,
+            "avg": 0.10420744999999994,
+            "min": 0.003066,
+            "med": 0.0071990000000000005
+        },
+        "vus_max": {
+            "value": 5,
+            "min": 5,
+            "max": 5
+        },
+        "data_received": {
+            "count": 316200,
+            "rate": 5229.815520226727
+        },
+        "http_req_duration{expected_response:true}": {
+            "max": 24.970979,
+            "p(90)": 10.1082905,
+            "p(95)": 13.626246050000002,
+            "avg": 6.488233576666667,
+            "min": 2.96768,
+            "med": 5.3160105
+        }
+    },
+    "root_group": {
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+            "estado HTTP 200": {
+                "name": "estado HTTP 200",
+                "path": "::estado HTTP 200",
+                "id": "de78ab3d9924ebbe1ef1a897bb0ec020",
+                "passes": 300,
+                "fails": 0
+            },
+            "respuesta en JSON": {
+                "id": "7c707e8b6aba53d37f7e09423817f925",
+                "passes": 300,
+                "fails": 0,
+                "name": "respuesta en JSON",
+                "path": "::respuesta en JSON"
+            },
+            "nodo identificado": {
+                "id": "7d2857f6ebdaf075a501bb080ddb5b1b",
+                "passes": 300,
+                "fails": 0,
+                "name": "nodo identificado",
+                "path": "::nodo identificado"
+            },
+            "menu contiene 10 platos": {
+                "name": "menu contiene 10 platos",
+                "path": "::menu contiene 10 platos",
+                "id": "3a1df0f1c752fbcd61fcc45544f71162",
+                "passes": 300,
+                "fails": 0
+            },
+            "platos tienen identificador y nombre": {
+                "name": "platos tienen identificador y nombre",
+                "path": "::platos tienen identificador y nombre",
+                "id": "a1ad2e3a89d3264f6c863088ecba74cd",
+                "passes": 300,
+                "fails": 0
+            }
+        },
+        "name": ""
+    }
+}
