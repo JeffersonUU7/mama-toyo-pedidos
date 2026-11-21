@@ -1,4 +1,3 @@
-
 import express from 'express';
 import cors from 'cors';
 import { platosDelDia } from './data';
@@ -28,9 +27,7 @@ export const app = express();
 // No revelar el framework en las respuestas.
 app.disable('x-powered-by');
 
-if (process.env.NODE_ENV !== 'production') {
-  app.use(cors());
-}
+app.use(cors());
 
 app.use(express.json());
 
@@ -203,15 +200,26 @@ app.use((_req, res) => {
 });
 
 // Errores siempre en JSON (por ejemplo, un body con JSON malformado).
-const manejadorErrores: express.ErrorRequestHandler = (error, _req, res, _next) => {
-  const estado = error.status && error.status >= 400 && error.status < 500 ? error.status : 500;
+const manejadorErrores: express.ErrorRequestHandler = (
+  error,
+  _req,
+  res,
+  _next
+) => {
+  const estado =
+    error.status && error.status >= 400 && error.status < 500
+      ? error.status
+      : 500;
 
   if (estado === 500) {
     console.error('Error no controlado:', error);
   }
 
   res.status(estado).json({
-    error: estado === 500 ? 'Error interno del servidor' : 'La solicitud no es válida',
+    error:
+      estado === 500
+        ? 'Error interno del servidor'
+        : 'La solicitud no es válida',
   });
 };
 

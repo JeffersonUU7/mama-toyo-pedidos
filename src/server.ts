@@ -6,6 +6,7 @@ const PORT = Number(process.env.PORT ?? 3000);
 async function iniciarServidor() {
   try {
     await inicializarPedidos();
+
     const servidor = app.listen(PORT, () => {
       console.log(`[${NODE_ID}] Servidor escuchando en el puerto ${PORT}`);
     });
@@ -13,8 +14,17 @@ async function iniciarServidor() {
     // Cierre ordenado: deja de aceptar peticiones, espera las abiertas y cierra el pool.
     const apagar = (senal: string) => {
       console.log(`[${NODE_ID}] ${senal} recibido: cerrando servidor`);
+
       servidor.close(async () => {
-        await cerrarPedidos();
+        try {
+          await cerrarPedidos();
+        } catch (error) {
+          console.error(
+            `[${NODE_ID}] Error al cerrar PostgreSQL:`,
+            error
+          );
+        }
+
         process.exit(0);
       });
     };

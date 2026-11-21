@@ -45,21 +45,31 @@ export async function inicializarPedidos(): Promise<void> {
     return;
   }
 
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS pedidos (
-      numero SERIAL PRIMARY KEY,
-      cliente TEXT NOT NULL,
-      items JSONB NOT NULL,
-      total_min NUMERIC(10,2) NOT NULL,
-      total_max NUMERIC(10,2) NOT NULL,
-      estado TEXT NOT NULL DEFAULT 'pendiente',
-      creado TIMESTAMPTZ NOT NULL DEFAULT now()
-    )
-  `);
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS pedidos (
+        numero SERIAL PRIMARY KEY,
+        cliente TEXT NOT NULL,
+        items JSONB NOT NULL,
+        total_min NUMERIC(10,2) NOT NULL,
+        total_max NUMERIC(10,2) NOT NULL,
+        estado TEXT NOT NULL DEFAULT 'pendiente',
+        creado TIMESTAMPTZ NOT NULL DEFAULT now()
+      )
+    `);
 
-  console.log('Tabla pedidos preparada en PostgreSQL');
+    console.log('Tabla pedidos preparada en PostgreSQL');
+  } catch (error: any) {
+    if (error?.code === '23505') {
+      console.log(
+        'La tabla pedidos ya fue preparada por otro nodo'
+      );
+      return;
+    }
+
+    throw error;
+  }
 }
-
 // Convertir una fila de PostgreSQL al formato de la API.
 function convertirPedido(row: PedidoDB): Pedido {
   return {
