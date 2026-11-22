@@ -1,7 +1,10 @@
 // Vista de cocina: GET /cocina (pendientes, en orden de llegada). Se refresca sola cada 5 s.
+// Cada pedido tiene un botón "Marcar listo" que llama PATCH /pedidos/:numero con {estado:'listo'}.
 
 const INTERVALO_MS = 5000;
 let nombres = new Map(); // platoId -> nombre
+const enviando = new Set(); 
+let avisoListo = ''; 
 const $ = (id) => document.getElementById(id);
 
 async function cargarNombres() {
@@ -15,7 +18,8 @@ async function actualizar() {
   try {
     const { pendientes } = await api('/cocina');
     const lista = pendientes ?? [];
-    $('error').hidden = true;
+    $('error').textContent = avisoListo;
+    $('error').hidden = !avisoListo;
     pintar(lista);
     $('estado').textContent = `${lista.length} pendiente(s) · actualizado ${new Date().toLocaleTimeString('es-SV')} · se refresca cada 5 s`;
   } catch (e) {
@@ -42,8 +46,36 @@ function pintar(pedidos) {
     }
     const [min, max] = limites(p, 'total');
     t.append(ul, el('div', 't', rango(min, max)));
+
+    const listo = el('button', 'btn ready', enviando.has(p.numero) ? 'Guardando…' : 'Marcar listo');
+    listo.type = 'button';
+    listo.disabled = enviando.has(p.numero);
+    listo.setAttribute('aria-label', `Marcar listo el pedido ${p.numero} de ${p.cliente}`);
+    listo.onclick = () => marcarListo(p.numero, listo);
+    t.append(listo);
+
     cont.append(t);
   }
+}
+
+async function marcarListo(numero, boton) {
+  if (enviando.has(numero)) return;
+  enviando.add(numero);
+  boton.disabled = true;
+  boton.textContent = 'Guardando…';
+  avisoListo = '';
+  $('error').hidden = true;
+  try {
+    await api('/pedidos/' + numero, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ estado: 'listo' }),
+    });
+  } catch (e) {
+    avisoListo = `No se pudo marcar el pedido #${numero} como listo. ${e.message}`;
+  }
+  enviando.delete(numero);
+  await actualizar(); // el pedido listo desaparece de la lista de pendientes
 }
 
 $('actualizar').onclick = actualizar;
