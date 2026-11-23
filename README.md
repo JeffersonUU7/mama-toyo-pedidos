@@ -61,6 +61,26 @@ Si abres la página desde otro puerto, arranca la API con `CORS_ORIGIN=http://lo
 
 Prueba: <http://localhost:3000/api/menu>
 
+## Cómo levantar el clúster (Fase 3 y entrega final)
+
+Clúster de 2 nodos idénticos + Nginx como balanceador y entrada única + PostgreSQL (`docker-compose.yml`).
+
+```bash
+bash certs/generar-certificado.sh        # una sola vez
+docker compose up --build -d
+docker compose ps                        # db, app1, app2 "healthy"; apache1, apache2, nginx "Up"
+curl -sk https://localhost:8443/api/health   # repetir: alterna nodo-1 / nodo-2
+```
+
+Entrada única: <https://localhost:8443> (el puerto 8080 redirige a HTTPS). Cocina: `/cocina.html` (usuario y clave de desarrollo en `docs/GUION_DEMO.md`).
+
+**Health check:** `/api/health` (el proceso vive) y `/api/ready` (además llega a PostgreSQL); Docker los vigila con `HEALTHCHECK` cada 10 s y
+Nginx marca un nodo como caído tras 2 fallos (`max_fails=2 fail_timeout=10s`).
+
+**Failover:** `docker compose stop app1` → el sitio sigue respondiendo desde `nodo-2`; `docker compose start app1` lo reincorpora.
+Evidencia automática: `bash docs/pruebas/evidencias-fase3.sh` (guarda `docs/evidencias/fase3/evidencia-fase3.txt`).
+Permisos POSIX: `bash docs/pruebas/permisos.sh`. Guion del video: [docs/GUION_VIDEO_FINAL.md](docs/GUION_VIDEO_FINAL.md).
+
 ## API
 
 Todas las rutas están bajo `/api` (la ruta que reenvía Apache). Cada respuesta incluye `node`, que indica qué nodo la atendió.
