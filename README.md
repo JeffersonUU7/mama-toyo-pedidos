@@ -79,7 +79,7 @@ Nginx marca un nodo como caído tras 2 fallos (`max_fails=2 fail_timeout=10s`).
 
 **Failover:** `docker compose stop app1` → el sitio sigue respondiendo desde `nodo-2`; `docker compose start app1` lo reincorpora.
 Evidencia automática: `bash docs/pruebas/evidencias-fase3.sh` (guarda `docs/evidencias/fase3/evidencia-fase3.txt`).
-Permisos POSIX: `bash docs/pruebas/permisos.sh`. Guion del video: [docs/GUION_VIDEO_FINAL.md](docs/GUION_VIDEO_FINAL.md).
+Permisos POSIX: `bash docs/pruebas/permisos.sh`.
 
 ## API
 
