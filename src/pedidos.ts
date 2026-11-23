@@ -216,6 +216,19 @@ export async function marcarPedidoListo(
   return pedido;
 }
 
+// Comprobación de "listo para atender": ¿responde la base de datos? Sin PostgreSQL (modo memoria)
+// el nodo siempre está listo. Sirve para monitoreo: /health dice "el proceso vive", /ready dice
+// "además puede guardar pedidos".
+export async function baseDeDatosDisponible(): Promise<boolean> {
+  if (!pool) return true;
+  try {
+    await pool.query('SELECT 1');
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 // Cerrar el pool de PostgreSQL al apagar el proceso.
 export async function cerrarPedidos(): Promise<void> {
   if (pool) await pool.end();

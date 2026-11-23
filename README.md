@@ -68,6 +68,7 @@ Todas las rutas están bajo `/api` (la ruta que reenvía Apache). Cada respuesta
 | Ruta | Método | Función |
 |---|---|---|
 | `/api/health` | GET | Responde 200 si el contenedor funciona |
+| `/api/ready` | GET | Responde 200 si el nodo además puede hablar con PostgreSQL (503 si no); es para monitoreo |
 | `/api/menu` | GET | Los platos del día con su precio mínimo y máximo |
 | `/api/pedidos` | POST | Crea un pedido y devuelve su número de confirmación |
 | `/api/pedidos/:numero` | GET | Consulta un pedido |
@@ -156,6 +157,9 @@ docker-compose.yml    Clúster: Nginx (HTTPS) + 2 nodos (Apache + Express) + Pos
 - [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md): cómo se conectan las piezas.
 - [docs/SERVIDOR_WEB.md](docs/SERVIDOR_WEB.md): Apache, HTTPS y reverse proxy.
 - [docs/DECISIONES.md](docs/DECISIONES.md): decisiones técnicas.
+- [docs/GUION_DEMO.md](docs/GUION_DEMO.md): guion paso a paso de la demo y preguntas probables de la defensa.
+- [docs/SEGURIDAD_Y_MONITOREO.md](docs/SEGURIDAD_Y_MONITOREO.md): controles de seguridad aplicados y cómo se monitorea el clúster.
+- [docs/PRUEBAS_DE_CARGA.md](docs/PRUEBAS_DE_CARGA.md): plan y resultados de las pruebas de carga (k6).
 - [docs/ORDEN_DE_TRABAJO.md](docs/ORDEN_DE_TRABAJO.md) y [docs/REPARTO.md](docs/REPARTO.md): orden y reparto de tareas.
 - [CONTRIBUTING.md](CONTRIBUTING.md): ramas y Pull Requests. Nuevos integrantes: [LEEME_PRIMERO.txt](LEEME_PRIMERO.txt).
 

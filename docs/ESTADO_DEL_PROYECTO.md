@@ -1,79 +1,59 @@
-# Estado del Proyecto — Mamá Toyo (16/11/2026)
+# Estado del Proyecto — Mamá Toyo (22/11/2026)
 
 > Documento único de referencia para la defensa. Resume qué está hecho, qué falta y cómo verificarlo.
-> Fuente de verdad: `git log`, `avances/`, código en `main`. Rama de esta actualización: `docs/actualizacion-documentacion`.
+> Fuente de verdad: `git log`, `avances/` y el código en `main`.
 
 ---
 
 ## Resumen ejecutivo
 
-| Entrega | Fecha prevista | Estado | Notas |
-|---|---|---|---|
-| Clase 29 — Propuesta | — | ✅ 10 % | Equipo formado, repo creado |
-| Clase 33 — Fase 2 | — | ✅ 20 % | Contenedor + Apache/HTTPS + docs (PR #9, #10) |
-| Clase 36 — Clúster + BD | Próx. clase | 🟡 ~70 % | **Infra lista**, faltan: botón listo, pruebas carga, guion demo |
-| Clase 39 — Final + Defensa | — | ⬜ 0 % | Pendiente Ronda 3 completa |
+| Entrega | Estado | Notas |
+|---|---|---|
+| Clase 29 — Propuesta | ✅ | Equipo formado, repo creado |
+| Clase 33 — Fase 2 | ✅ | Contenedor + Apache/HTTPS + docs |
+| Clase 36 — Clúster + BD | ✅ | Nginx + 2 nodos + PostgreSQL, botón "Marcar listo" (PR #18), guion de demo |
+| Clase 39 — Final + Defensa | 🟡 | Falta **ejecutar** las pruebas de carga de la sección 13 (Randal) y ensayar la defensa |
 
 ---
 
 ## Qué está HECHO (verificable en `main`)
 
-### Fase 2 (Clase 33) — 100 %
-- API Express/TypeScript con rutas `/api/health`, `/api/menu`, `/api/pedidos` (POST/GET), `/api/cocina`
-- Validaciones: cantidad 1–20, máx 20 líneas, nombre ≤ 60 chars, `platoId` entero ≥ 1
-- Precios como rangos (`precioMin`/`precioMax`) según menú real (10 platos, `docs/MENU.md`)
-- Interfaz web (`web/`): menú con ±, resumen, formulario, consulta, cocina con auto-refresh 5 s
-- Apache 2.4 (HTTPS mkcert, ProxyPass `/api` → Express, redirección HTTP→HTTPS)
-- `apache/docker-compose.apache.yml` funcional, evidencias en `docs/evidencias/`
+### Fase 2 — contenedor y servidor web
+- API Express/TypeScript: `/api/health`, `/api/ready`, `/api/menu`, `/api/pedidos` (POST, GET, PATCH), `/api/cocina`.
+- Validaciones: cantidad 1–20, máx. 20 líneas, nombre ≤ 60, `platoId` entero ≥ 1; el total lo calcula el servidor.
+- Interfaz web (`web/`): menú con precios en rango, resumen, formulario, consulta de pedido y cocina con refresco cada 5 s y botón **Marcar listo**.
+- Apache 2.4 con HTTPS y `apache/docker-compose.apache.yml` (Fase 2, independiente del clúster).
 
-### Ronda 2 — Infraestructura de clúster (Clase 36) — **Infra 100 %**
+### Clúster (Rondas 2 y 3)
 | Componente | Estado | Evidencia |
 |---|---|---|
-| `docker-compose.yml` con Nginx, app1, app2, db (PG16) | ✅ | PR #12 |
-| Balanceo round-robin (`zone cluster_app 64k`) | ✅ | `avances/05` 15/11: `node` alterna nodo-1/nodo-2 |
-| Failover pasivo (`max_fails=2 fail_timeout=10s`) | ✅ | `docker compose stop app1` → sitio responde |
-| PostgreSQL con volumen `pgdata` + healthcheck | ✅ | `db` healthy, `depends_on: service_healthy` |
-| `DATABASE_URL` en app1/app2 | ✅ | Contrato Decisión 1 cumplido |
-| Persistencia en `src/pedidos.ts` (`pg`, `Number()` en NUMERIC) | ✅ | PR #13 |
-| Tabla `pedidos` auto-creada al arrancar | ✅ | Código verificado |
-| Memoria si no hay `DATABASE_URL` (para `npm run dev`) | ✅ | Código verificado |
-| Ruta `PATCH /api/pedidos/:numero` (marcar listo) | ✅ | PR #13, validada con curl |
-| 4 pruebas de demo **técnicas resueltas** | ✅ | Ver abajo |
+| Nginx como entrada única, HTTPS en `:8443`, `:8080` redirige | ✅ | Validado con `docker compose up` (22/11) |
+| Nginx → Apache por HTTPS; `apache1`/`apache2` sirven `web/` y reenvían a su Express | ✅ | PR #16 y auditoría |
+| Balanceo round-robin (`zone`) y failover (`max_fails=2 fail_timeout=10s`) | ✅ | `curl` alterna `nodo-1`/`nodo-2` |
+| Failover también para POST/PATCH (ante 502/503) | ✅ | 6 POST con `app1` detenido → 6 × `201` (22/11) |
+| PostgreSQL con volumen `pgdata` y healthcheck | ✅ | `docker compose ps` |
+| Nodos resistentes al reinicio de PostgreSQL | ✅ | `restart db` → nodos siguen vivos (22/11) |
+| Seguridad: login de cocina, límite de peticiones, CORS cerrado, contenedor sin root, etc. | ✅ | `docs/SEGURIDAD_Y_MONITOREO.md` |
+| Monitoreo: `/api/ready`, log de Nginx con nodo, `docs/pruebas/monitoreo.sh` | ✅ | `docs/SEGURIDAD_Y_MONITOREO.md` |
+| Botón "Marcar listo" en cocina | ✅ | PR #18 |
+| Guion de demo y preguntas de defensa | ✅ | `docs/GUION_DEMO.md` |
 
-#### Las 4 pruebas de demo (ORDEN_DE_TRABAJO.md) — Estado real
-
-| # | Prueba | Estado | Quién/Prueba |
-|---|---|---|---|
-| 1 | `docker compose up --build` levanta db, app1, app2, nginx sanos | ✅ | Juan, 15/11 (`avances/05`) |
-| 2 | Crear pedido → consultar 10× `/api/pedidos/1` → siempre 200 | ✅ | PG compartido (Juan) |
-| 3 | `docker compose stop app1` → sitio responde, pedido visible | ✅ | Juan, 15/11 (failover) |
-| 4 | `docker compose down` (sin `-v`) + `up` → pedido existe | ✅ | Volumen `pgdata` persistente |
-
-> **Nota:** Las 4 pruebas están técnicamente resueltas. Falta registrarlas formalmente en los avances del equipo y preparar el **guion de demo** (Jefferson) y el **botón "Marcar listo"** en cocina (Yessica).
+### Pruebas de carga (Randal)
+- Hechas: baseline y pruebas de 5 usuarios (por HTTP, 19–20/11) y progresiva hasta **300** usuarios (resumen en `docs/pruebas/resultados/resumen-carga-progresiva.md`). Solo midió `/api/health`.
+- **Falta:** ejecutar la sección 13 de `docs/PRUEBAS_DE_CARGA.md` (flujo completo con PostgreSQL, hasta 400 usuarios, 2 nodos contra 1, por HTTPS) y pegar los resultados.
 
 ---
 
-## Qué FALTA para la Clase 36 (demo)
+## Qué FALTA
 
-| Tarea | Responsable | Bloqueada por | Estado |
-|---|---|---|---|
-| Botón "Marcar listo" en `cocina.html` (llama `PATCH`) | Yessica | Ruta PATCH ya existe | ⬜ Pendiente |
-| Pruebas de carga k6 (1 nodo, 2 nodos, 300–400 VU) | Randal | Infra lista | ⬜ Pendiente |
-| Guion de demo (qué se muestra, quién, orden) | Jefferson | — | ⬜ Pendiente |
-| Registrar las 4 pruebas en avances del equipo | Cada quien | — | ⬜ Pendiente |
-
----
-
-## Qué FALTA para la Clase 39 (Ronda 3)
-
-| Tarea | Responsable | Decisión ref. |
+| Tarea | Responsable | Estado |
 |---|---|---|
-| Apache por nodo (`apache1`, `apache2`) en `docker-compose.yml` | Josué + Juan | Dec. 2, etapa 2 |
-| HTTPS en Nginx (certificado autofirmado) | Josué | Dec. 2, etapa 3 |
-| Seguridad y monitoreo (Clase 37) | Randal | — |
-| Validar dimensionamiento con pruebas reales | Randal | — |
-| Documentación final + diagrama actualizado | Jefferson | — |
-| Ensayo defensa oral (todos explican todo) | **Todos** | — |
+| Ejecutar las pruebas de carga de la sección 13 y registrar resultados | Randal | ⬜ Scripts y comandos listos |
+| Revisar y poder explicar seguridad y monitoreo (`docs/SEGURIDAD_Y_MONITOREO.md`) | Randal | ⬜ |
+| Repetir la persistencia (`docker compose down` y `up`) con la versión nueva | Juan / Brissvey | ⬜ |
+| Registrar en `avances/` lo probado ("Cómo lo probé"), incluido el PR #18 | Cada quien (Yessica: `avances/03`) | ⬜ |
+| Ensayar la demo completa con `docs/GUION_DEMO.md` y la defensa oral | **Todos** | ⬜ |
+| Revisar en GitHub si el repositorio es público o privado (los docs dicen privado) | Jefferson | ⬜ |
 
 ---
 
@@ -83,55 +63,38 @@
 # 1. Compila y tipos OK
 npm ci && npx tsc --noEmit
 
-# 2. Fase 2 (Apache + Express, memoria)
-bash certs/generar-certificado.sh
-docker compose -f apache/docker-compose.apache.yml up --build
-# Abre https://localhost:8443 y https://localhost:8443/cocina.html
+# 2. Clúster completo (HTTPS)
+bash certs/generar-certificado.sh          # una sola vez
+docker compose up --build -d
+docker compose ps                          # db, app1, app2 "healthy"
+curl -sk https://localhost:8443/api/health # alterna nodo-1 / nodo-2 al repetir
+curl -sk https://localhost:8443/api/ready  # 200 si el nodo llega a PostgreSQL
 
-# 3. Clúster completo (Nginx + 2 Express + PostgreSQL)
-docker compose up --build
-# API en http://localhost:8080/api/health (balanceo: node alterna)
-# Probar failover: docker compose stop app1 → seguir consultando /api/health
+# 3. Failover con escritura
+docker compose stop app1
+for i in 1 2 3 4 5 6; do curl -sk -o /dev/null -w "%{http_code} " -X POST https://localhost:8443/api/pedidos \
+  -H 'Content-Type: application/json' -d '{"cliente":"Prueba","items":[{"platoId":1,"cantidad":1}]}'; done; echo   # seis 201
+docker compose start app1
 
-# 4. Verificar persistencia
-# Crear pedido → consultar → docker compose down → up → consultar (existe)
+# 4. Persistencia (SIN -v)
+docker compose down && docker compose up -d
+curl -sk https://localhost:8443/api/pedidos/1   # el pedido sigue existiendo
 
-# 5. Probar PATCH marcar listo
-curl -X PATCH http://localhost:8080/api/pedidos/1 \
-  -H 'Content-Type: application/json' -d '{"estado":"listo"}'
-# Debe responder 200 con pedido.estado="listo"
+# 5. Cocina (pide clave: cocina / toyo2026)
+curl -sk -o /dev/null -w "%{http_code}\n" https://localhost:8443/api/cocina                    # 401
+curl -sk -u cocina:toyo2026 -X PATCH https://localhost:8443/api/pedidos/1 \
+  -H 'Content-Type: application/json' -d '{"estado":"listo"}'                                   # 200, estado "listo"
+
+# 6. Monitoreo
+bash docs/pruebas/monitoreo.sh 10m
 ```
 
 ---
 
-## Archivos clave y su estado
+## Riesgos / límites a declarar en la defensa
 
-| Archivo | Estado | Último cambio relevante |
-|---|---|---|
-| `src/app.ts` | ✅ Actual | PATCH implementado, validaciones completas |
-| `src/pedidos.ts` | ✅ Actual | PG + memoria, `Number()` en NUMERIC, tabla auto-creada |
-| `src/data.ts` | ✅ Actual | 10 platos con rangos |
-| `docker-compose.yml` | ✅ Actual | Nginx, app1, app2, db, volúmenes, healthchecks |
-| `nginx/nginx.conf` | ✅ Actual | `zone cluster_app 64k`, round-robin, failover pasivo |
-| `apache/httpd.conf` | ✅ Actual | HTTPS mkcert, ProxyPass `/api`, headers seguridad |
-| `web/app.js`, `web/cocina.js` | ⚠️ Falta botón listo | PATCH ya disponible en API |
-| `docs/DECISIONES.md` | ✅ Actual | Dec. 1, 5, Etapa 1 marcadas implementadas |
-
----
-
-## Riesgos / Decisiones abiertas
-
-1. **Plan B (Apache delante de Nginx)** — Si no alcanza tiempo para etapa 2/3, coordinación decide (ver `DECISIONES.md`).
-2. **HTTPS en Nginx** — Requiere certificado y configurar `proxy_ssl` hacia Apache; Josué responsable.
-3. **Pruebas de carga** — Randal debe ejecutar k6 contra `:8080/api` (solo API, no hay interfaz en Nginx).
-4. **Defensa oral** — Cada integrante debe explicar **cualquier** parte (infra, API, frontend, docs).
-
----
-
-## Próximos pasos inmediatos
-
-1. **Yessica**: rama `avance/yessica-boton-listo` → botón en `cocina.html` llama `PATCH /api/pedidos/:numero`.
-2. **Randal**: rama `avance/randal-pruebas-carga` → script k6 + resultados en `docs/resultados-carga/`.
-3. **Jefferson**: rama `docs/guion-demo` → guion paso a paso con tiempos y responsables.
-4. **Josué/Juan**: rama `avance/josue-apache-nodo` → `apache1`/`apache2` en compose + HTTPS Nginx (etapas 2 y 3).
-5. **Todos**: registrar avances y abrir PRs → coordinador revisa y aprueba.
+1. **Un solo PostgreSQL:** si cae, no se crean ni consultan pedidos (los nodos se recuperan solos al volver).
+2. **Credencial de cocina de desarrollo** (HTTP Basic) y **certificado de desarrollo**; Nginx no verifica el certificado de los Apache.
+3. **Pruebas de carga en una sola computadora:** k6, Docker y los 6 contenedores comparten recursos; miden el servidor, no el navegador.
+4. **`GET /api/pedidos/:numero` es público por diseño.**
+5. **Defensa oral:** cada integrante debe explicar cualquier parte (infra, API, frontend, docs). Preguntas probables en `docs/GUION_DEMO.md`.

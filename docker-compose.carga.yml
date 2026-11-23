@@ -1,0 +1,9 @@
+# Override SOLO para pruebas de carga: Nginx sin el límite de escrituras por IP (que en producción protege el sistema
+# pero haría que k6, que genera todo el tráfico desde una sola máquina, reciba 429).
+# NO usar en la demo ni en producción. Uso:
+#   bash docs/pruebas/preparar-carga.sh
+#   docker compose -f docker-compose.yml -f docker-compose.carga.yml up -d --build
+services:
+  nginx:
+    volumes:
+      - ./nginx/nginx.carga.conf:/etc/nginx/conf.d/default.conf:ro

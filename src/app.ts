@@ -6,6 +6,7 @@ import {
   buscarPedido,
   pedidosPendientes,
   marcarPedidoListo,
+  baseDeDatosDisponible,
 } from './pedidos';
 
 export const NODE_ID = process.env.NODE_ID ?? 'local';
@@ -26,6 +27,12 @@ export const app = express();
 
 // No revelar el framework en las respuestas.
 app.disable('x-powered-by');
+
+// Cada respuesta indica qué nodo la atendió (útil en la demo y para el monitoreo: Nginx lo anota en su log).
+app.use((_req, res, next) => {
+  res.setHeader('X-Node', NODE_ID);
+  next();
+});
 
 // CORS cerrado por defecto: en producción la página y la API salen del mismo origen
 // (Nginx/Apache), así que no hace falta. Solo para desarrollo: CORS_ORIGIN=http://localhost:5500
@@ -51,6 +58,12 @@ api.get('/health', (_req, res) => {
 });
 
 // Menú del día
+// Readiness: 200 si el nodo puede hablar con PostgreSQL, 503 si no. Para monitoreo (no lo usa Docker).
+api.get('/ready', async (_req, res) => {
+  const bd = await baseDeDatosDisponible();
+  res.status(bd ? 200 : 503).json({ status: bd ? 'ready' : 'not_ready', baseDeDatos: bd ? 'ok' : 'sin conexion', node: NODE_ID });
+});
+
 api.get('/menu', (_req, res) => {
   res.json({
     node: NODE_ID,

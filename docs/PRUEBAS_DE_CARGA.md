@@ -169,7 +169,7 @@ Los resultados obtenidos servirán para proponer mejoras y comprobar la estabili
 - Usuarios virtuales: 5.
 - Duración: 1 minuto.
 - Infraestructura: Nginx con dos nodos de aplicación.
-- Destino: `https://localhost:8443` (acceso desde el contenedor mediante `host.docker.internal`).
+- Destino: `http://localhost:8080` (acceso desde el contenedor mediante `host.docker.internal`). *Nota: esta prueba se hizo el 19/11, antes de agregar HTTPS a Nginx; hoy el punto de entrada es `https://localhost:8443`.*
 
 **Resultados obtenidos en la primera ejecución:**
 
@@ -197,3 +197,76 @@ Los resultados muestran un comportamiento satisfactorio del endpoint de salud co
 **Limitación:** esta prueba evalúa exclusivamente el endpoint de salud. No permite concluir todavía cuál es la capacidad máxima del sistema ni el rendimiento de las operaciones que utilizan PostgreSQL.
 
 **Evidencia:** `docs/pruebas/resultados/baseline-health-5vus.json` (archivo de resultados de la ejecución guardada).
+
+## 13. Pruebas de la Ronda 3: dimensionamiento con 400 usuarios, 1 nodo contra 2 nodos
+
+Estas son las pruebas que faltan para validar el dimensionamiento (requisito de la Ronda 3). Todo está preparado para
+ejecutarse con comandos; **los resultados de esta sección se llenan con lo que salga de la ejecución real** (no se escriben números
+de antemano).
+
+### 13.1 Qué se ejecuta
+
+| N.º | Prueba | Nodos | Qué mide |
+|---|---|---|---|
+| 1 | `carga-flujo-completo`, pico 400 | 2 | Flujo real (menú → crear pedido → consultar → marcar listo) usando PostgreSQL |
+| 2 | `carga-flujo-completo`, pico 400 | 1 | Lo mismo con un solo nodo: sirve para comparar y justificar tener dos |
+| 3 | `carga-progresiva`, pico 400 | 2 | Solo `/api/health`, ya con HTTPS (la de 20/11 fue por HTTP y llegó a 300) |
+
+`carga-flujo-completo` sube a 400 usuarios virtuales (25 %, 50 %, 75 % y 400 sostenidos 60 s), con pausas de 1 a 3 segundos entre
+pasos, como harían clientes reales. Umbrales: p95 < 500 ms, solicitudes fallidas < 1 %, verificaciones correctas > 99 %.
+
+### 13.2 Preparación (una sola vez por sesión de pruebas)
+
+Nginx limita las escrituras a 30 por segundo por IP (es una protección real, ver `docs/SEGURIDAD_Y_MONITOREO.md`). Como k6 genera
+todo el tráfico desde una sola computadora, hay que levantar el clúster con un archivo adicional que quita ese límite **solo para
+medir**. No usarlo en la demo.
+
+```bash
+bash docs/pruebas/preparar-carga.sh        # genera nginx/nginx.carga.conf (solo cambia el límite)
+docker compose -f docker-compose.yml -f docker-compose.carga.yml up -d --build
+docker compose ps                          # los 6 servicios deben estar Up (db, app1, app2 healthy)
+```
+
+### 13.3 Ejecución
+
+```bash
+# 2 nodos
+bash docs/pruebas/correr-pruebas.sh carga-flujo-completo 2nodos 400
+bash docs/pruebas/correr-pruebas.sh carga-progresiva 2nodos 400
+
+# 1 nodo: se detiene un nodo completo (Apache + Express) y se repite
+docker compose stop apache2 app2
+bash docs/pruebas/correr-pruebas.sh carga-flujo-completo 1nodo 400
+docker compose start apache2 app2
+```
+
+Mientras corre una prueba, en otra terminal: `bash docs/pruebas/monitoreo.sh 5m` (reparto por nodo, errores 5xx, tiempos y uso de
+recursos). Con un solo nodo, Nginx intenta primero el nodo detenido y reintenta en el otro, así que pueden verse algunos reintentos al
+inicio; es el comportamiento del failover y conviene mencionarlo.
+
+Cada ejecución guarda un **resumen** (unos KB) en `docs/pruebas/resultados/<prueba>-<etiqueta>-400vus.json`. No guardes la salida
+cruda de k6 (`--out json`): pesa decenas de MB (la de la prueba del 20/11 pesaba 79 MB).
+
+### 13.4 Resultados (completar con los datos reales)
+
+Genera la tabla con:
+
+```bash
+node docs/pruebas/resumir.js docs/pruebas/resultados/carga-flujo-completo-2nodos-400vus.json \
+  docs/pruebas/resultados/carga-flujo-completo-1nodo-400vus.json \
+  docs/pruebas/resultados/carga-progresiva-2nodos-400vus.json
+```
+
+y pégala aquí debajo, con la fecha y el equipo donde se ejecutó:
+
+> **Pendiente de ejecutar** (responsable: Randal). Fecha: ____ · Equipo / recursos de Docker: ____
+
+### 13.5 Cómo interpretar y qué concluir
+
+- Si con **2 nodos** el p95 queda bajo 500 ms y las fallas bajo 1 % hasta 400 usuarios: el clúster está dimensionado para esa demanda.
+- Si con **1 nodo** el p95 o las fallas empeoran claramente, la comparación justifica tener dos nodos. Si no empeoran, decirlo con
+  honestidad: en este equipo local el cuello de botella puede ser la propia computadora (k6, Docker y los 6 contenedores comparten CPU).
+- Si aparecen `429` es que se levantó con la configuración normal en vez de `docker-compose.carga.yml`.
+- Límites que hay que declarar: es una sola máquina (no hay red real entre los nodos), PostgreSQL es un único servicio, el certificado
+  es de desarrollo y los usuarios virtuales no ejecutan JavaScript de navegador (miden el servidor, no la interfaz).
+- Al terminar: `docker compose -f docker-compose.yml -f docker-compose.carga.yml down` y volver a `docker compose up -d` normal.

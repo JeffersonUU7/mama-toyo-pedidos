@@ -33,25 +33,25 @@ Las decisiones y el **contrato entre Juan y Brissvey** (nombres, variables, tabl
 |---|---|---|---|
 | 5 | Juan | **Primero:** probar `docker compose up --build`, confirmar balanceo y failover, y registrarlo en su avance. **Luego:** servicio `db` y `DATABASE_URL` en los dos nodos, según el contrato. | ✅ Hecho (PR #12, avance 15/11) |
 | 2 | Brissvey | Pedidos en PostgreSQL en `src/pedidos.ts` (paquete `pg`, tabla creada al arrancar, memoria si no hay `DATABASE_URL`). Después, la ruta `PATCH /api/pedidos/:numero`. | ✅ Hecho (PR #13) |
-| 6 | Randal | **Ahora, sin esperar la base de datos:** pruebas de carga contra `http://localhost:8080` con 1 y con 2 nodos, incluida una de 300 a 400 usuarios virtuales. Repetirlas cuando esté la base de datos. Resultados en `docs/`. | ⬜ Pendiente |
-| 3 | Yessica | Botón "marcar listo" en `cocina.html` cuando exista la ruta `PATCH`. Antes, probar la interfaz contra el clúster con `?api=http://localhost:8080/api`. | ⬜ Pendiente (ruta PATCH ya existe) |
-| 4 | Josué | Preparar el Apache por nodo (`apache1` y `apache2`) con la misma configuración, cada uno hacia su Express (Decisión 2, etapa 2). No bloquea la demo de la Clase 36. | ⬜ Pendiente |
-| 1 | Jefferson | Guion de la demo y revisión de los PR. | ⬜ Pendiente |
+| 6 | Randal | Pruebas de carga con 1 y con 2 nodos, hasta 400 usuarios virtuales. Hecho: baseline, 5 usuarios y progresiva hasta 300 (por HTTP, antes de HTTPS). **Falta:** ejecutar la sección 13 de `docs/PRUEBAS_DE_CARGA.md` por HTTPS y pegar los resultados. | ⬜ Falta ejecutar (scripts listos) |
+| 3 | Yessica | Botón "marcar listo" en `cocina.html`. | ✅ Hecho (PR #18) |
+| 4 | Josué | Apache por nodo (`apache1` y `apache2`) con la misma configuración, cada uno hacia su Express (Decisión 2, etapa 2). | ✅ Hecho (PR #16) |
+| 1 | Jefferson | Guion de la demo y revisión de los PR. | ✅ Guion en `docs/GUION_DEMO.md`; PR revisados |
 
 **Terminada cuando** se cumplen estas cuatro pruebas (son la demo):
 1. ✅ `docker compose up --build` levanta `db`, `app1`, `app2` y `nginx`, y `docker compose ps` los muestra sanos. (Juan, 15/11)
-2. ✅ Se crea un pedido y se consulta 10 veces por `http://localhost:8080/api/pedidos/1`: siempre responde 200. (Gracias a PostgreSQL compartido, confirmado por Juan)
+2. ✅ Se crea un pedido y se consulta 10 veces por `https://localhost:8443/api/pedidos/1`: siempre responde 200. (Gracias a PostgreSQL compartido, confirmado por Juan)
 3. ✅ Con `docker compose stop app1` el sitio sigue respondiendo y el pedido sigue visible. (Juan, 15/11)
 4. ✅ Con `docker compose down` (sin `-v`) y luego `up`, el pedido sigue existiendo. (Volumen `pgdata` persistente, confirmado por Juan)
 
-**Nota:** Las 4 pruebas técnicas están resueltas (según registro de Juan en `avances/05`). Falta: botón "marcar listo" en cocina, pruebas de carga, guion de demo, y registrar estas 4 pruebas como ejecutadas formalmente en los avances.
+**Nota:** las 4 pruebas técnicas están resueltas (Juan, 15/11). El 22/11/2026 se repitieron en parte con el clúster nuevo (Apache por nodo y HTTPS): balanceo, failover con escritura (6 POST con `app1` detenido → 201) y reinicio de la base sin caída de los nodos. La persistencia con `docker compose down` y `up` no se repitió con la versión nueva: conviene repetirla antes de la entrega. Falta: las pruebas de carga de la sección 13 (Randal) y que cada integrante registre sus pruebas en su archivo de `avances/`.
 
 ## Ronda 3: cierre → Entrega Clase 39
 
-1. Josué y Juan: integran el Apache por nodo en `docker-compose.yml` y ponen HTTPS en Nginx (Decisión 2, etapas 2 y 3).
-2. Randal: seguridad y monitoreo (temas de la Clase 37) y validar el dimensionamiento con pruebas reales.
-3. Jefferson: documentación final y diagrama actualizado.
-4. **Todos** ensayan la defensa oral. Cada uno debe poder explicar cualquier parte del sistema.
+1. ✅ Josué y Juan: Apache por nodo en `docker-compose.yml` y HTTPS en Nginx (Decisión 2, etapas 2 y 3). Validado con `docker compose up` el 22/11/2026.
+2. 🟡 Randal: seguridad y monitoreo (Clase 37). Aplicados y documentados en `docs/SEGURIDAD_Y_MONITOREO.md` (login de cocina, límite de peticiones, `/api/ready`, log de Nginx con nodo, `docs/pruebas/monitoreo.sh`). **Falta:** revisarlo, poder explicarlo, y ejecutar el dimensionamiento con pruebas reales (sección 13 de `docs/PRUEBAS_DE_CARGA.md`).
+3. ✅ Jefferson: documentación final y diagrama actualizados; guion de la demo y preguntas de la defensa en `docs/GUION_DEMO.md`.
+4. ⬜ **Todos** ensayan la defensa oral. Cada uno debe poder explicar cualquier parte del sistema (usar las preguntas de `docs/GUION_DEMO.md`).
 
 ## Cómo se registra el avance
 
