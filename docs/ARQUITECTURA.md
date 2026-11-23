@@ -47,7 +47,7 @@ El contenedor Express usa PostgreSQL si existe `DATABASE_URL`; si no, usa memori
 
 - **Nginx** (`nginx:1.27-alpine`): único punto de entrada. HTTPS en `:8443` (TLS 1.2/1.3), `:8080` redirige a HTTPS.
   Balanceo round-robin con `zone` compartida; `resolve` para volver a consultar la IP de los Apache; failover pasivo
-  (`max_fails=2`, `fail_timeout=10s`) que también reintenta POST y PATCH ante 502/503; límite de 30 escrituras/s por IP;
+  (`max_fails=2`, `fail_timeout=10s`) que también reintenta POST y PATCH ante 500, 502, 503 o timeout; límite de 30 escrituras/s por IP;
   cuerpo máximo de 16 kb; usuario y contraseña para la cocina.
 - **2 Apache** (`apache1`, `apache2`): HTTPS en el puerto 443 interno, sirven `web/` y reenvían `/api` a su Express.
 - **2 nodos Express** (`app1`, `app2`) con `NODE_ID`, `DATABASE_URL` y `REQUIRE_DB=true`; corren como usuario `node` (no root).

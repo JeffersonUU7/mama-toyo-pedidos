@@ -16,10 +16,13 @@ proxy_set_header X-Forwarded-Proto $scheme;
 # Las credenciales de cocina las valida Nginx; no se reenvian a los nodos.
 proxy_set_header Authorization "";
 
-# Failover: si un nodo falla, se reintenta en el otro. "non_idempotent" permite reintentar tambien
-# POST y PATCH. Es seguro con 502/503 (Apache no pudo hablar con Express: nada se proceso).
-# Se quito http_500 a proposito: un 500 de Express podria significar que el pedido YA se guardo,
-# y reintentarlo duplicaria el pedido.
-proxy_next_upstream error timeout http_502 http_503 non_idempotent;
+# Failover: si un nodo falla, se reintenta en el otro. "non_idempotent" permite reintentar tambien POST y PATCH.
+# Cuando se detiene un contenedor de la app, Apache ya no resuelve su nombre en Docker y contesta 500
+# ("DNS lookup failure"), no 502/503; por eso http_500 tambien dispara el reintento y cuenta como fallo del nodo.
+# Los errores 500 de Express no guardan pedidos a medias (el INSERT es una sola sentencia), asi que reintentar es seguro.
+# Los timeouts cortos evitan que una peticion se quede esperando a un nodo caido.
+proxy_connect_timeout 3s;
+proxy_read_timeout 6s;
+proxy_next_upstream error timeout http_500 http_502 http_503 non_idempotent;
 proxy_next_upstream_tries 2;
 proxy_next_upstream_timeout 15s;

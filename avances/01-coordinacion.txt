@@ -290,3 +290,36 @@ Como lo probe: npm run build; API con PostgreSQL real (ready 200/503/200 al apag
   docker-compose.carga.yml, el log de Nginx en docker compose logs y monitoreo.sh (hay que correrlos en el equipo).
 Bloqueos o dudas: Randal debe ejecutar la seccion 13 de PRUEBAS_DE_CARGA.md; cada quien registra lo suyo en avances/.
 <<<
+
+Fecha: 23/11/2026
+Que hice: Prepare lo que falta para la Fase 3 y la entrega final. Agregue
+  docs/pruebas/evidencias-fase3.sh, que genera la evidencia del balanceo, del
+  failover (apagando app1) y de los logs de Nginx y Apache. Agregue
+  docs/pruebas/permisos.sh, que aplica y audita los permisos POSIX (llave 600,
+  certificado 644, scripts 755, ningun archivo 777). Agregue al README como
+  levantar el cluster, el health check y el failover, y a
+  docs/SEGURIDAD_Y_MONITOREO.md la tabla de permisos y donde estan los logs.
+Archivos que toque: README.md, docs/SEGURIDAD_Y_MONITOREO.md,
+  docs/pruebas/evidencias-fase3.sh, docs/pruebas/permisos.sh,
+  avances/01-coordinacion.txt
+Rama / numero de PR: docs/fase3-evidencias-y-guion-final (PR hacia main)
+Como lo probe: Corri bash docs/pruebas/permisos.sh y las auditorias de archivos
+  777 salieron vacias. El script de evidencias lo corre Juan con el cluster
+  levantado.
+Bloqueos o dudas: Ninguno. Falta que Juan genere la evidencia del cluster y que
+  Randal ejecute las pruebas de carga de la seccion 13.
+
+Fecha: 23/11/2026
+Que hice: Al correr docs/pruebas/evidencias-fase3.sh vi que, con app1 detenido,
+  Apache contestaba 500 (DNS lookup failure) y Nginx no reintentaba en el otro
+  nodo, asi que fallaban peticiones. Agregue http_500 a proxy_next_upstream y
+  timeouts cortos en nginx/proxy.inc, y actualice docs/GUION_DEMO.md,
+  docs/ARQUITECTURA.md y docs/ESTADO_DEL_PROYECTO.md para que digan lo mismo.
+Archivos que toque: nginx/proxy.inc, docs/GUION_DEMO.md, docs/ARQUITECTURA.md,
+  docs/ESTADO_DEL_PROYECTO.md, docs/evidencias/fase3/evidencia-fase3.txt,
+  avances/01-coordinacion.txt
+Rama / numero de PR: docs/fase3-evidencias-y-guion-final (PR hacia main)
+Como lo probe: Con docker compose stop app1, 8 GET a /api/health dieron 200 y
+  6 POST a /api/pedidos dieron 201; despues docker compose start app1 y el
+  balanceo volvio a alternar nodo-1 y nodo-2.
+Bloqueos o dudas: Ninguno.

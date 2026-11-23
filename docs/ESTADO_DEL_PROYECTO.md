@@ -30,7 +30,7 @@
 | Nginx como entrada única, HTTPS en `:8443`, `:8080` redirige | ✅ | Validado con `docker compose up` (22/11) |
 | Nginx → Apache por HTTPS; `apache1`/`apache2` sirven `web/` y reenvían a su Express | ✅ | PR #16 y auditoría |
 | Balanceo round-robin (`zone`) y failover (`max_fails=2 fail_timeout=10s`) | ✅ | `curl` alterna `nodo-1`/`nodo-2` |
-| Failover también para POST/PATCH (ante 502/503) | ✅ | 6 POST con `app1` detenido → 6 × `201` (22/11) |
+| Failover también para POST/PATCH (ante 500/502/503 o timeout) | ✅ | 6 POST con `app1` detenido → 6 × `201` (22/11) |
 | PostgreSQL con volumen `pgdata` y healthcheck | ✅ | `docker compose ps` |
 | Nodos resistentes al reinicio de PostgreSQL | ✅ | `restart db` → nodos siguen vivos (22/11) |
 | Seguridad: login de cocina, límite de peticiones, CORS cerrado, contenedor sin root, etc. | ✅ | `docs/SEGURIDAD_Y_MONITOREO.md` |

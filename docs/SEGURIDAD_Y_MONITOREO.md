@@ -61,3 +61,22 @@ en el otro nodo. Para ver un fallo y su recuperación, ejecuta `docker compose s
   Un clúster de base de datos queda fuera del alcance.
 - **El monitoreo es local y bajo demanda** (logs y un script). No hay alertas automáticas ni paneles (Prometheus/Grafana).
 - **El límite de 30 escrituras/s es por IP**: detrás de un mismo NAT, varios clientes comparten límite.
+
+## 4. Permisos POSIX y logs (evidencia de la defensa)
+
+Se aplican con `bash docs/pruebas/permisos.sh` (Linux, macOS o WSL) y se muestran en el video. Principio: el mínimo permiso necesario, nunca 777.
+
+| Archivo / directorio | Permiso | Por qué |
+|---|---|---|
+| `certs/server.key` (llave privada) | `600` | Solo el dueño la lee; Nginx y Apache la leen al arrancar como root |
+| `certs/server.crt` | `644` | El certificado es público |
+| `nginx/htpasswd` | `644` | Lo lee el worker de Nginx (usuario `nginx`); con `640` respondería 500. Solo guarda hashes |
+| `nginx/*.conf`, `apache/*.conf`, `docker-compose*.yml` | `644` | Lectura general, escritura solo del dueño |
+| `certs/generar-certificado.sh`, `docs/pruebas/*.sh` | `755` | Ejecutables, no escribibles por otros |
+| Montajes en Docker (`web/`, `certs/`, configs) | `:ro` | Los contenedores no pueden modificarlos |
+| Proceso de la app | usuario `node` | No corre como root |
+
+Auditoría: `find . -path ./node_modules -prune -o -perm 777 -print` debe salir vacío.
+
+Dónde están los logs: Nginx → `docker compose logs nginx` (formato `cluster`, sección 2). Apache de cada nodo →
+`docker compose logs apache1` / `apache2` (access log en formato `common` hacia stdout y error log hacia stderr, configurados con `CustomLog` y `ErrorLog` en `apache/httpd-nodo.conf`).

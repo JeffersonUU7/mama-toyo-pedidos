@@ -1,0 +1,129 @@
+EVIDENCIA FASE 3 - Cluster Mama Toyo
+Fecha: Mon Nov 23 17:12:47 HAC 2026
+
+==================================================================
+1. Contenedores del cluster (2 nodos + Apache por nodo + Nginx + PostgreSQL)
+==================================================================
+NAME                          IMAGE                    COMMAND                  SERVICE   CREATED         STATUS                    PORTS
+mama-toyo-pedidos-apache1-1   httpd:2.4-alpine         "httpd-foreground"       apache1   21 hours ago    Up 5 minutes              80/tcp
+mama-toyo-pedidos-apache2-1   httpd:2.4-alpine         "httpd-foreground"       apache2   21 hours ago    Up 5 minutes              80/tcp
+mama-toyo-pedidos-app1-1      mama-toyo-pedidos-app1   "docker-entrypoint.s…"   app1      5 minutes ago   Up 17 seconds (healthy)   3000/tcp
+mama-toyo-pedidos-app2-1      mama-toyo-pedidos-app2   "docker-entrypoint.s…"   app2      5 minutes ago   Up 5 minutes (healthy)    3000/tcp
+mama-toyo-pedidos-db-1        postgres:16-alpine       "docker-entrypoint.s…"   db        2 days ago      Up 5 minutes (healthy)    5432/tcp
+mama-toyo-pedidos-nginx-1     nginx:1.27-alpine        "/docker-entrypoint.…"   nginx     21 hours ago    Up 36 seconds             0.0.0.0:8080->80/tcp, [::]:8080->80/tcp, 0.0.0.0:8443->443/tcp, [::]:8443->443/tcp
+
+==================================================================
+2. Health check de cada nodo (/api/health y /api/ready)
+==================================================================
+{"status":"ok","node":"nodo-2"}
+{"status":"ok","node":"nodo-1"}
+{"status":"ok","node":"nodo-2"}
+{"status":"ok","node":"nodo-1"}
+{"status":"ready","baseDeDatos":"ok","node":"nodo-2"}
+
+==================================================================
+3. Balanceo round-robin: 6 peticiones alternan nodo-1 y nodo-2
+==================================================================
+{"status":"ok","node":"nodo-1"}
+{"status":"ok","node":"nodo-2"}
+{"status":"ok","node":"nodo-1"}
+{"status":"ok","node":"nodo-2"}
+{"status":"ok","node":"nodo-1"}
+{"status":"ok","node":"nodo-2"}
+--- Log de Nginx (campo node= muestra quien atendio) ---
+ts=2026-11-23T23:12:48+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.004 node=nodo-1 ust=200 urt=0.004
+ts=2026-11-23T23:12:49+00:00 ip=172.22.0.1 user=- req="GET /api/ready HTTP/1.1" status=200 bytes=53 rt=0.003 node=nodo-2 ust=200 urt=0.003
+ts=2026-11-23T23:12:49+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.003 node=nodo-1 ust=200 urt=0.003
+ts=2026-11-23T23:12:49+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.003 node=nodo-2 ust=200 urt=0.003
+ts=2026-11-23T23:12:49+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.003 node=nodo-1 ust=200 urt=0.003
+ts=2026-11-23T23:12:49+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.002 node=nodo-2 ust=200 urt=0.002
+ts=2026-11-23T23:12:50+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.003 node=nodo-1 ust=200 urt=0.003
+ts=2026-11-23T23:12:50+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.002 node=nodo-2 ust=200 urt=0.003
+
+==================================================================
+4. FAILOVER: se detiene app1 (nodo-1)
+==================================================================
+ Container mama-toyo-pedidos-app1-1  Stopping
+ Container mama-toyo-pedidos-app1-1  Stopped
+NAME                          IMAGE                    COMMAND                  SERVICE   CREATED         STATUS                   PORTS
+mama-toyo-pedidos-apache1-1   httpd:2.4-alpine         "httpd-foreground"       apache1   21 hours ago    Up 5 minutes             80/tcp
+mama-toyo-pedidos-apache2-1   httpd:2.4-alpine         "httpd-foreground"       apache2   21 hours ago    Up 5 minutes             80/tcp
+mama-toyo-pedidos-app2-1      mama-toyo-pedidos-app2   "docker-entrypoint.s…"   app2      6 minutes ago   Up 5 minutes (healthy)   3000/tcp
+mama-toyo-pedidos-db-1        postgres:16-alpine       "docker-entrypoint.s…"   db        2 days ago      Up 6 minutes (healthy)   5432/tcp
+mama-toyo-pedidos-nginx-1     nginx:1.27-alpine        "/docker-entrypoint.…"   nginx     21 hours ago    Up 42 seconds            0.0.0.0:8080->80/tcp, [::]:8080->80/tcp, 0.0.0.0:8443->443/tcp, [::]:8443->443/tcp
+--- 8 peticiones GET: todas deben responder, ahora solo nodo-2 ---
+{"status":"ok","node":"nodo-2"}
+{"status":"ok","node":"nodo-2"}
+{"status":"ok","node":"nodo-2"}
+{"status":"ok","node":"nodo-2"}
+{"status":"ok","node":"nodo-2"}
+{"status":"ok","node":"nodo-2"}
+{"status":"ok","node":"nodo-2"}
+{"status":"ok","node":"nodo-2"}
+--- 6 POST /api/pedidos con un nodo caido: deben ser seis 201 ---
+201 201 201 201 201 201 
+--- Log de Nginx durante la caida (ust=503, 201 = reintento en el otro nodo) ---
+ts=2026-11-23T23:12:49+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.002 node=nodo-2 ust=200 urt=0.002
+ts=2026-11-23T23:12:50+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.003 node=nodo-1 ust=200 urt=0.003
+ts=2026-11-23T23:12:50+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.002 node=nodo-2 ust=200 urt=0.003
+2026/11/23 23:13:00 [error] 22#22: *54 upstream timed out (110: Operation timed out) while reading response header from upstream, client: 172.22.0.1, server: , request: "GET /api/health HTTP/1.1", upstream: "https://172.22.0.6:443/api/health", host: "localhost:8443"
+ts=2026-11-23T23:13:00+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=6.012 node=nodo-2 ust=504, 200 urt=6.006, 0.006
+ts=2026-11-23T23:13:00+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.002 node=nodo-2 ust=200 urt=0.002
+2026/11/23 23:13:06 [warn] 22#22: *59 upstream server temporarily disabled while reading response header from upstream, client: 172.22.0.1, server: , request: "GET /api/health HTTP/1.1", upstream: "https://172.22.0.6:443/api/health", host: "localhost:8443"
+2026/11/23 23:13:06 [error] 22#22: *59 upstream timed out (110: Operation timed out) while reading response header from upstream, client: 172.22.0.1, server: , request: "GET /api/health HTTP/1.1", upstream: "https://172.22.0.6:443/api/health", host: "localhost:8443"
+ts=2026-11-23T23:13:06+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=6.009 node=nodo-2 ust=504, 200 urt=6.005, 0.004
+ts=2026-11-23T23:13:06+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.002 node=nodo-2 ust=200 urt=0.002
+ts=2026-11-23T23:13:07+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.003 node=nodo-2 ust=200 urt=0.003
+ts=2026-11-23T23:13:07+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.003 node=nodo-2 ust=200 urt=0.003
+ts=2026-11-23T23:13:07+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.003 node=nodo-2 ust=200 urt=0.003
+ts=2026-11-23T23:13:07+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.002 node=nodo-2 ust=200 urt=0.002
+ts=2026-11-23T23:13:07+00:00 ip=172.22.0.1 user=- req="POST /api/pedidos HTTP/1.1" status=201 bytes=186 rt=0.005 node=nodo-2 ust=201 urt=0.005
+ts=2026-11-23T23:13:07+00:00 ip=172.22.0.1 user=- req="POST /api/pedidos HTTP/1.1" status=201 bytes=186 rt=0.007 node=nodo-2 ust=201 urt=0.007
+ts=2026-11-23T23:13:07+00:00 ip=172.22.0.1 user=- req="POST /api/pedidos HTTP/1.1" status=201 bytes=186 rt=0.010 node=nodo-2 ust=201 urt=0.010
+ts=2026-11-23T23:13:08+00:00 ip=172.22.0.1 user=- req="POST /api/pedidos HTTP/1.1" status=201 bytes=186 rt=0.011 node=nodo-2 ust=201 urt=0.011
+ts=2026-11-23T23:13:08+00:00 ip=172.22.0.1 user=- req="POST /api/pedidos HTTP/1.1" status=201 bytes=186 rt=0.007 node=nodo-2 ust=201 urt=0.007
+ts=2026-11-23T23:13:08+00:00 ip=172.22.0.1 user=- req="POST /api/pedidos HTTP/1.1" status=201 bytes=186 rt=0.007 node=nodo-2 ust=201 urt=0.007
+--- Log de Apache del nodo caido (apache1) ---
+[Mon Nov 23 23:12:30.232328 2026] [proxy_http:error] [pid 92:tid 107] [client 172.22.0.7:42246] AH01114: HTTP: failed to make connection to backend: app1
+172.22.0.7 - - [23/Nov/2026:23:12:14 +0000] "GET /api/health HTTP/1.0" 503 339
+[Mon Nov 23 23:12:30.570027 2026] [proxy_http:error] [pid 92:tid 108] [client 172.22.0.7:42252] AH01114: HTTP: failed to make connection to backend: app1
+172.22.0.7 - - [23/Nov/2026:23:12:21 +0000] "GET /api/health HTTP/1.0" 503 339
+172.22.0.7 - - [23/Nov/2026:23:12:48 +0000] "GET /api/health HTTP/1.0" 200 31
+172.22.0.7 - - [23/Nov/2026:23:12:48 +0000] "GET /api/health HTTP/1.0" 200 31
+172.22.0.7 - - [23/Nov/2026:23:12:49 +0000] "GET /api/health HTTP/1.0" 200 31
+172.22.0.7 - - [23/Nov/2026:23:12:49 +0000] "GET /api/health HTTP/1.0" 200 31
+172.22.0.7 - - [23/Nov/2026:23:12:50 +0000] "GET /api/health HTTP/1.0" 200 31
+[Mon Nov 23 23:13:04.263740 2026] [proxy:error] [pid 92:tid 115] (70007)The timeout specified has expired: AH00957: http: attempt to connect to 172.22.0.4:3000 (app1:3000) failed
+
+==================================================================
+5. RECUPERACION: se vuelve a levantar app1
+==================================================================
+ Container mama-toyo-pedidos-db-1  Waiting
+ Container mama-toyo-pedidos-db-1  Healthy
+ Container mama-toyo-pedidos-app1-1  Starting
+ Container mama-toyo-pedidos-app1-1  Started
+(esperando 20 s: healthcheck de Docker + fail_timeout de Nginx)
+NAME                          IMAGE                    COMMAND                  SERVICE   CREATED         STATUS                    PORTS
+mama-toyo-pedidos-apache1-1   httpd:2.4-alpine         "httpd-foreground"       apache1   21 hours ago    Up 6 minutes              80/tcp
+mama-toyo-pedidos-apache2-1   httpd:2.4-alpine         "httpd-foreground"       apache2   21 hours ago    Up 6 minutes              80/tcp
+mama-toyo-pedidos-app1-1      mama-toyo-pedidos-app1   "docker-entrypoint.s…"   app1      6 minutes ago   Up 20 seconds (healthy)   3000/tcp
+mama-toyo-pedidos-app2-1      mama-toyo-pedidos-app2   "docker-entrypoint.s…"   app2      6 minutes ago   Up 6 minutes (healthy)    3000/tcp
+mama-toyo-pedidos-db-1        postgres:16-alpine       "docker-entrypoint.s…"   db        2 days ago      Up 6 minutes (healthy)    5432/tcp
+mama-toyo-pedidos-nginx-1     nginx:1.27-alpine        "/docker-entrypoint.…"   nginx     21 hours ago    Up About a minute         0.0.0.0:8080->80/tcp, [::]:8080->80/tcp, 0.0.0.0:8443->443/tcp, [::]:8443->443/tcp
+{"status":"ok","node":"nodo-2"}
+{"status":"ok","node":"nodo-1"}
+{"status":"ok","node":"nodo-2"}
+{"status":"ok","node":"nodo-1"}
+--- Log de Nginx tras la recuperacion (vuelven a aparecer nodo-1 y nodo-2) ---
+ts=2026-11-23T23:13:07+00:00 ip=172.22.0.1 user=- req="POST /api/pedidos HTTP/1.1" status=201 bytes=186 rt=0.010 node=nodo-2 ust=201 urt=0.010
+ts=2026-11-23T23:13:08+00:00 ip=172.22.0.1 user=- req="POST /api/pedidos HTTP/1.1" status=201 bytes=186 rt=0.011 node=nodo-2 ust=201 urt=0.011
+ts=2026-11-23T23:13:08+00:00 ip=172.22.0.1 user=- req="POST /api/pedidos HTTP/1.1" status=201 bytes=186 rt=0.007 node=nodo-2 ust=201 urt=0.007
+ts=2026-11-23T23:13:08+00:00 ip=172.22.0.1 user=- req="POST /api/pedidos HTTP/1.1" status=201 bytes=186 rt=0.007 node=nodo-2 ust=201 urt=0.007
+ts=2026-11-23T23:13:31+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.003 node=nodo-2 ust=200 urt=0.002
+ts=2026-11-23T23:13:31+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.003 node=nodo-1 ust=200 urt=0.003
+ts=2026-11-23T23:13:31+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.002 node=nodo-2 ust=200 urt=0.002
+ts=2026-11-23T23:13:31+00:00 ip=172.22.0.1 user=- req="GET /api/health HTTP/1.1" status=200 bytes=31 rt=0.003 node=nodo-1 ust=200 urt=0.003
+
+==================================================================
+FIN - evidencia guardada en docs/evidencias/fase3/evidencia-fase3.txt
+==================================================================
