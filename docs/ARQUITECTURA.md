@@ -64,7 +64,7 @@ flowchart LR
 certificado de desarrollo); la contraseña de cocina es HTTP Basic con credencial de desarrollo; `GET /api/pedidos/:numero` es
 público por diseño (quien adivine un número ve ese pedido); un solo PostgreSQL.
 
-## Fases 3 y 4: arquitectura objetivo (Decisión 2)
+## Cómo se llegó a esta arquitectura (Decisión 2)
 
 ```mermaid
 flowchart LR
@@ -81,7 +81,7 @@ flowchart LR
 **Etapas (Decisión 2):**
 
 1. ✅ **Etapa 1 (Clase 36).** Nginx balancea los dos Express, que ya existen, y se agrega PostgreSQL. La interfaz se sigue viendo con el Apache independiente (`apache/docker-compose.apache.yml`). **Hecho.**
-2. ⬜ **Etapa 2 (antes de la Clase 39).** Cada nodo tiene su Apache, que sirve `web/` y reenvía a su Express. Nginx balancea hacia los Apache. Responsables: Josué y Juan.
-3. ⬜ **Etapa 3 (Clase 37).** HTTPS en Nginx con un certificado autofirmado de `certs/`. Nginx habla por HTTPS con los Apache. Responsable: Josué.
+2. ✅ **Etapa 2.** Cada nodo tiene su Apache, que sirve `web/` y reenvía a su Express. Nginx balancea hacia los Apache. **Hecho** (Josué y Juan).
+3. ✅ **Etapa 3.** HTTPS en Nginx con un certificado autofirmado de `certs/`. Nginx habla por HTTPS con los Apache. **Hecho** (validado con `docker compose up` el 22/11/2026).
 
-**Plan B si no alcanza el tiempo** (propuesta de Josué): Apache delante de Nginx. Se cambia el `ProxyPass` a `http://nginx:80` y se unen ambos compose a la misma red. Funciona con pocos cambios, pero el balanceador deja de ser la entrada y Apache pasa a ser un punto único de falla. La coordinación decide si se usa al terminar la Clase 36.
+**Plan B (no fue necesario; se mantiene como referencia)** (propuesta de Josué): Apache delante de Nginx. Se cambia el `ProxyPass` a `http://nginx:80` y se unen ambos compose a la misma red. Funciona con pocos cambios, pero el balanceador deja de ser la entrada y Apache pasa a ser un punto único de falla. La coordinación decide si se usa al terminar la Clase 36.

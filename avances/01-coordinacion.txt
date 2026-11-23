@@ -269,3 +269,24 @@ Pendiente:
 - Validar con docker compose up (no se pudo ejecutar Docker en la revision).
 - Repetir pruebas de carga por HTTPS y llegar a 400 usuarios.
 - Revisar visibilidad del repositorio en GitHub.
+
+>>> ENTRADA
+Fecha: 2026-11-22
+Que hice: Preparacion de la Ronda 3 (rama ronda3-listo).
+  - Probe en el cluster (docker compose up): HTTPS, balanceo, login de cocina, failover con escritura
+    (6 POST con app1 detenido -> 201) y reinicio de la base (nodos siguen vivos). Revise y aprobe el PR #18 (boton Marcar listo).
+  - Monitoreo: GET /api/ready (revisa PostgreSQL), cabecera X-Node, log de Nginx con nodo y tiempos,
+    docs/pruebas/monitoreo.sh.
+  - Pruebas de carga: scripts hasta 400 usuarios (carga-flujo-completo.js con PostgreSQL, carga-progresiva.js),
+    docker-compose.carga.yml, preparar-carga.sh, correr-pruebas.sh y resumir.js. Quedan por EJECUTAR (Randal).
+  - Documentacion: GUION_DEMO.md (guion y preguntas de defensa), SEGURIDAD_Y_MONITOREO.md, ESTADO_DEL_PROYECTO.md,
+    ORDEN_DE_TRABAJO.md, REPARTO.md y ARQUITECTURA.md actualizados.
+  - Correccion: la seccion 12 de PRUEBAS_DE_CARGA.md decia que el baseline del 19/11 fue por HTTPS; fue por HTTP
+    (:8080), antes de agregar HTTPS. Restaurado.
+Archivos que toque: src/app.ts, src/pedidos.ts, nginx/nginx.conf, docs/ (varios), docs/pruebas/ (scripts)
+Rama / numero de PR: ronda3-listo / (completar con el numero)
+Como lo probe: npm run build; API con PostgreSQL real (ready 200/503/200 al apagar y encender la base); nginx real con
+  backends HTTPS de prueba (log, monitoreo.sh, limite 429); scripts k6 contra la API local. NO probado todavia en Docker:
+  docker-compose.carga.yml, el log de Nginx en docker compose logs y monitoreo.sh (hay que correrlos en el equipo).
+Bloqueos o dudas: Randal debe ejecutar la seccion 13 de PRUEBAS_DE_CARGA.md; cada quien registra lo suyo en avances/.
+<<<
