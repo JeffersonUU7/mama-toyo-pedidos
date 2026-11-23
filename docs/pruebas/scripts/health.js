@@ -3,6 +3,7 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 
 export const options = {
+  insecureSkipTLSVerify: true, // certificado de desarrollo (mkcert/autofirmado)
   vus: 5,
   duration: '1m',
   thresholds: {
@@ -12,7 +13,7 @@ export const options = {
 };
 
 export default function () {
-  const response = http.get('http://host.docker.internal:8080/api/health');
+  const response = http.get('https://host.docker.internal:8443/api/health');
 
   check(response, {
     'estado HTTP 200': (r) => r.status === 200,

@@ -56,6 +56,9 @@ npm install
 npm run dev
 ```
 
+Si abres la página desde otro puerto, arranca la API con `CORS_ORIGIN=http://localhost:5500 npm run dev` y abre la página con
+`?api=http://localhost:3000/api` (solo se aceptan rutas relativas o `localhost`).
+
 Prueba: <http://localhost:3000/api/menu>
 
 ## API
@@ -71,8 +74,7 @@ Todas las rutas están bajo `/api` (la ruta que reenvía Apache). Cada respuesta
 | `/api/pedidos/:numero` | PATCH | Marca un pedido como listo (`{"estado":"listo"}`) |
 | `/api/cocina` | GET | Pedidos pendientes, en orden de llegada |
 
-Las mismas rutas existen también sin el prefijo `/api` (por ejemplo `/health`): las usan el balanceador Nginx, el
-health check de Docker y las pruebas de carga.
+Las mismas rutas existen también sin el prefijo `/api` (por ejemplo `/health`): las usan el health check de Docker y los Apache.
 
 Ejemplo de pedido:
 
@@ -92,22 +94,32 @@ curl -k -X PATCH https://localhost:8443/api/pedidos/1 \
 
 El total del pedido se devuelve como rango (`totalMin` y `totalMax`), igual que los precios del menú.
 
-## Clúster (Ronda 2 — en curso)
+## Clúster (Ronda 2 y 3)
 
-El repositorio incluye `docker-compose.yml` con Nginx, 2 nodos Express (`app1`, `app2`) y PostgreSQL (`db`).
-El balanceo y failover funcionan; los pedidos se guardan en PostgreSQL compartido.
+El repositorio incluye `docker-compose.yml` con Nginx (balanceador + HTTPS), 2 nodos (`apache1` → `app1`, `apache2` → `app2`)
+y PostgreSQL (`db`). Nginx habla con los Apache por HTTPS; cada Apache sirve `web/` y reenvía `/api` a su Express.
+El balanceo y el failover funcionan; los pedidos se guardan en el PostgreSQL compartido.
 
 ```bash
-docker compose up --build          # levanta Nginx, app1, app2, db
+bash certs/generar-certificado.sh   # una sola vez (el clúster monta certs/ en Nginx y en los Apache)
+docker compose up --build           # levanta Nginx, apache1, apache2, app1, app2, db
 ```
 
-Entrada por <http://localhost:8080> (solo API, sin interfaz web; ver Decisión 2, etapa 2).
+Entrada: **<https://localhost:8443>** (menú y pedido). `http://localhost:8080` solo redirige a HTTPS.
+
+**Cocina protegida:** `https://localhost:8443/cocina.html`, `GET /api/cocina` y `PATCH /api/pedidos/:numero` piden usuario y
+contraseña (HTTP Basic en Nginx). Credenciales de **desarrollo**: usuario `cocina`, contraseña `toyo2026` (archivo `nginx/htpasswd`).
+Para cambiarla: `openssl passwd -apr1 'nueva'` y reemplazar el hash en `nginx/htpasswd`. Crear y consultar un pedido sigue siendo
+público (el cliente no tiene cuenta).
 
 Simular falla de un nodo:
 
 ```bash
-docker compose stop app1
+docker compose stop app1      # el sitio sigue respondiendo y los POST/PATCH se reintentan en el otro nodo
 ```
+
+Variables (`.env.example`): `POSTGRES_PASSWORD`, y solo para desarrollo `CORS_ORIGIN` (CORS está cerrado por defecto;
+en el clúster la página y la API comparten origen). En el clúster, `REQUIRE_DB=true` impide que un nodo arranque sin PostgreSQL.
 
 ## HTTPS y evidencias
 
@@ -121,11 +133,11 @@ src/                  Contenedor: API Express/TypeScript
 web/                  Interfaz estática (HTML, CSS, JS) que sirve Apache
 apache/               Configuración de Apache (HTTPS + reverse proxy) y su docker-compose
 certs/                Script que genera el certificado (las llaves no se suben)
-nginx/                Configuración del balanceador
+nginx/                Balanceador: nginx.conf, proxy.inc y htpasswd (clave de cocina)
 docs/                 Arquitectura, decisiones, menú, evidencias y planes
 avances/              Registro de avances de cada integrante
 Dockerfile            Imagen del contenedor Express
-docker-compose.yml    Clúster: 2 nodos + Nginx + PostgreSQL
+docker-compose.yml    Clúster: Nginx (HTTPS) + 2 nodos (Apache + Express) + PostgreSQL
 ```
 
 ## Equipo

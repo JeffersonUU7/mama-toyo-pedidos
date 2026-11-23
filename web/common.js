@@ -4,7 +4,19 @@
 // servidor (Apache reenvía /api al contenedor Express), así no se necesita CORS.
 // Para probar la página abierta desde otro puerto (por ejemplo un servidor estático en :5500),
 // abre la página con ?api=http://localhost:3000/api   (o http://localhost:8080/api por el balanceador).
-const API_BASE = (new URLSearchParams(location.search).get('api') || '/api').replace(/\/$/, '');
+// Solo se acepta ?api= si apunta a esta misma página (ruta relativa) o a localhost. Si no, un enlace
+// malicioso podría hacer que la página envíe los pedidos de los clientes a otro servidor.
+function baseDeApi() {
+  const pedido = new URLSearchParams(location.search).get('api');
+  if (!pedido) return '/api';
+  if (pedido.startsWith('/') && !pedido.startsWith('//')) return pedido.replace(/\/$/, '');
+  try {
+    const u = new URL(pedido);
+    if (['localhost', '127.0.0.1'].includes(u.hostname)) return pedido.replace(/\/$/, '');
+  } catch (e) { /* URL inválida: se ignora */ }
+  return '/api';
+}
+const API_BASE = baseDeApi();
 
 async function api(ruta, opciones) {
   let res;

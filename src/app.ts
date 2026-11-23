@@ -27,9 +27,20 @@ export const app = express();
 // No revelar el framework en las respuestas.
 app.disable('x-powered-by');
 
-app.use(cors());
+// CORS cerrado por defecto: en producción la página y la API salen del mismo origen
+// (Nginx/Apache), así que no hace falta. Solo para desarrollo: CORS_ORIGIN=http://localhost:5500
+// (varios orígenes separados por coma).
+const origenesCors = (process.env.CORS_ORIGIN ?? '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
 
-app.use(express.json());
+if (origenesCors.length > 0) {
+  app.use(cors({ origin: origenesCors }));
+}
+
+// Un pedido real pesa unos cientos de bytes: 16 kb sobran y limitan el abuso.
+app.use(express.json({ limit: '16kb' }));
 
 // Router de la API.
 const api = express.Router();
@@ -43,7 +54,8 @@ api.get('/health', (_req, res) => {
 api.get('/menu', (_req, res) => {
   res.json({
     node: NODE_ID,
-    fecha: new Date().toISOString().slice(0, 10),
+    // Fecha local de El Salvador (toISOString usaría UTC y desde las 6 pm mostraría el día siguiente).
+    fecha: new Date().toLocaleDateString('en-CA', { timeZone: 'America/El_Salvador' }),
     platos: platosDelDia,
   });
 });

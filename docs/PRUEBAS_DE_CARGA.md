@@ -42,7 +42,7 @@ Se utilizará Grafana k6 debido a las siguientes características:
 
 Las pruebas estarán orientadas a evaluar los servicios web del proyecto (API).
 
-**Importante:** El puerto `:8080` (Nginx balanceador) **solo expone la API** (`/api/health`, `/api/menu`, `/api/pedidos`, `/api/cocina`, `/api/pedidos/:numero` PATCH). No sirve la interfaz web (`web/`). La interfaz se sirve por Apache en `:8443` (Fase 2) o por los Apache por nodo (Decisión 2, etapa 2, pendiente). Las pruebas de carga se ejecutan contra la API directamente.
+**Importante:** el punto de entrada del clúster es `https://localhost:8443` (Nginx). Ahí se sirven la interfaz web y la API; `:8080` solo redirige a HTTPS. Los scripts de k6 apuntan a `https://host.docker.internal:8443` con `insecureSkipTLSVerify` (certificado de desarrollo). `PATCH /api/pedidos/:n` exige la clave de cocina; Nginx limita las escrituras a 30/s por IP (ver `docs/pruebas/resultados/resumen-carga-progresiva.md`).
 
 Se consideran los siguientes endpoints:
 
@@ -125,10 +125,10 @@ Se utilizarán:
 **Comando para levantar el entorno de pruebas (clúster con PostgreSQL):**
 
 ```bash
-docker compose up --build   # levanta Nginx (:8080), app1, app2, db
+docker compose up --build   # levanta Nginx (:8443), apache1, apache2, app1, app2, db
 ```
 
-Las pruebas de carga se ejecutan contra `http://localhost:8080/api/...` (sin interfaz web).
+Las pruebas de carga se ejecutan contra `https://localhost:8443/api/...`.
 
 Las pruebas se realizarán sobre el entorno de desarrollo y no sobre un sistema en producción.
 
@@ -169,7 +169,7 @@ Los resultados obtenidos servirán para proponer mejoras y comprobar la estabili
 - Usuarios virtuales: 5.
 - Duración: 1 minuto.
 - Infraestructura: Nginx con dos nodos de aplicación.
-- Destino: `http://localhost:8080` (acceso desde el contenedor mediante `host.docker.internal`).
+- Destino: `https://localhost:8443` (acceso desde el contenedor mediante `host.docker.internal`).
 
 **Resultados obtenidos en la primera ejecución:**
 

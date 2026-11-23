@@ -41,35 +41,28 @@ El contenedor Express usa PostgreSQL si existe `DATABASE_URL`; si no, usa memori
 - El contenedor Express no se publica al exterior: solo Apache puede llegar a él.
 - La API valida los datos de entrada (cantidad de 1 a 20 por plato, hasta 20 líneas, nombre de hasta 60 caracteres).
 
-## Clúster: estado actual (Ronda 2 — en curso)
+## Clúster: estado actual (Ronda 3)
 
-El repositorio ya incluye `docker-compose.yml` con:
+`docker-compose.yml` levanta:
 
-- **Nginx** (`nginx:1.27-alpine`) en el puerto 8080 como balanceador (round-robin con `zone` compartida)
-- **2 nodos Express** (`app1`, `app2`) con `NODE_ID=nodo-1|nodo-2` y `DATABASE_URL` apuntando a PostgreSQL
-- **PostgreSQL 16** (`postgres:16-alpine`) con volumen `pgdata` y healthcheck `pg_isready`
+- **Nginx** (`nginx:1.27-alpine`): único punto de entrada. HTTPS en `:8443` (TLS 1.2/1.3), `:8080` redirige a HTTPS.
+  Balanceo round-robin con `zone` compartida; `resolve` para volver a consultar la IP de los Apache; failover pasivo
+  (`max_fails=2`, `fail_timeout=10s`) que también reintenta POST y PATCH ante 502/503; límite de 30 escrituras/s por IP;
+  cuerpo máximo de 16 kb; usuario y contraseña para la cocina.
+- **2 Apache** (`apache1`, `apache2`): HTTPS en el puerto 443 interno, sirven `web/` y reenvían `/api` a su Express.
+- **2 nodos Express** (`app1`, `app2`) con `NODE_ID`, `DATABASE_URL` y `REQUIRE_DB=true`; corren como usuario `node` (no root).
+- **PostgreSQL 16** con volumen `pgdata` y healthcheck. Es un punto único de falla (límite declarado en la Decisión 1).
 
 ```mermaid
 flowchart LR
-    N["Navegador"] -- "HTTP :8080" --> NG["Nginx<br/>balanceador"]
-    NG --> E1["Express 1<br/>nodo-1"]
-    NG --> E2["Express 2<br/>nodo-2"]
-    E1 --> DB[("PostgreSQL")]
-    E2 --> DB
+    N["Navegador"] -- "HTTPS :8443" --> NG["Nginx<br/>balanceador"]
+    NG -- "HTTPS" --> A1["Apache 1"] --> E1["Express 1<br/>nodo-1"] --> DB[("PostgreSQL")]
+    NG -- "HTTPS" --> A2["Apache 2"] --> E2["Express 2<br/>nodo-2"] --> DB
 ```
 
-**Qué funciona hoy en el clúster:**
-
-- `docker compose up --build` levanta los 4 servicios sanos (`docker compose ps` → healthy)
-- Balanceo round-robin: el campo `node` alterna entre `nodo-1` y `nodo-2`
-- Failover: `docker compose stop app1` → el sitio sigue respondiendo por `app2`
-- Persistencia: `docker compose down` (sin `-v`) y `up` → los pedidos siguen existiendo
-
-**Qué falta para la demo de la Clase 36:**
-
-- Botón "Marcar listo" en `cocina.html` (ruta `PATCH` ya existe en la API)
-- Pruebas de carga con k6 (1 y 2 nodos, 300–400 usuarios virtuales)
-- Guion de demo y registro de las 4 pruebas en los avances
+**Limitaciones conocidas (declararlas en la defensa):** Nginx no verifica el certificado de los Apache (red interna de Docker,
+certificado de desarrollo); la contraseña de cocina es HTTP Basic con credencial de desarrollo; `GET /api/pedidos/:numero` es
+público por diseño (quien adivine un número ve ese pedido); un solo PostgreSQL.
 
 ## Fases 3 y 4: arquitectura objetivo (Decisión 2)
 

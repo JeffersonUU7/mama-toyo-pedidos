@@ -64,9 +64,9 @@ balanceador (Nginx), como pide el alcance del proyecto. Y cada nodo repite lo tr
 **Se construye por etapas, para que cada una se pueda demostrar:**
 1. ✅ **Etapa 1 (Clase 36).** Nginx balancea los dos Express, que ya existen, y se agrega PostgreSQL. Mientras tanto la
    interfaz se sigue viendo con el Apache independiente (`apache/docker-compose.apache.yml`). **IMPLEMENTADA** (Juan, PR #12).
-2. ⬜ **Etapa 2 (antes de la Clase 39).** Cada nodo tiene su Apache, que sirve `web/` y reenvía a su Express. Nginx
+2. ✅ **Etapa 2.** Cada nodo tiene su Apache, que sirve `web/` y reenvía a su Express. Nginx
    balancea hacia los Apache. Responsables: Josué y Juan.
-3. ⬜ **Etapa 3 (Clase 37).** HTTPS en Nginx con un certificado autofirmado de `certs/`. Nginx habla por HTTPS con los
+3. ✅ **Etapa 3 (IMPLEMENTADA, pendiente de validar con `docker compose up` en el equipo).** HTTPS en Nginx con un certificado autofirmado de `certs/`. Nginx habla por HTTPS con los
    Apache. Responsable: Josué.
 
 **Plan B si no alcanza el tiempo** (propuesta de Josué): Apache delante de Nginx. Se cambia el `ProxyPass` a

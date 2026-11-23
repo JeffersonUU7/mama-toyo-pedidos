@@ -250,3 +250,22 @@ PRÓXIMAS ACTIVIDADES
 - Preparar defensa y exposición del proyecto.
 - Realizar pruebas finales de demostración antes de la entrega.
 
+
+AUDITORIA DE LA FASE 3 (rama fix/auditoria-fase3)
+
+Corregido:
+- Nginx con HTTPS (:8443); :8080 solo redirige. Nginx -> Apache tambien por HTTPS.
+- Failover de POST/PATCH (non_idempotent, solo ante 502/503) y re-resolucion de IPs (resolve).
+- pool.on('error') en PostgreSQL: el nodo ya no se cae al reiniciar la base (probado: antes caia, ahora sigue vivo).
+- REQUIRE_DB=true en el cluster; timeout de conexion a la BD.
+- Seguridad: CORS cerrado por defecto, ?api= restringido a localhost/relativo, contenedor sin root,
+  limite de cuerpo (16 kb) y de escrituras por IP, clave para cocina (cocina.html, /api/cocina, PATCH).
+- Fecha del menu en hora de El Salvador (antes UTC).
+- Documentacion actualizada; carga-progresiva.json (79 MB) fuera del repo, resumen en docs/pruebas/resultados/.
+
+Pendiente:
+- Boton "Marcar listo" en cocina.js (Yessica). Debe enviar el PATCH; el navegador ya manda la clave de cocina
+  automaticamente porque cocina.html esta en el mismo origen y se autentica antes.
+- Validar con docker compose up (no se pudo ejecutar Docker en la revision).
+- Repetir pruebas de carga por HTTPS y llegar a 400 usuarios.
+- Revisar visibilidad del repositorio en GitHub.
