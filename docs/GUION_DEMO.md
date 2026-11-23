@@ -87,8 +87,8 @@ Deben salir seis `201`. Además, hacer un pedido desde el navegador (pestaña 1)
 docker compose start app1
 ```
 
-Decir: Apache del nodo caído responde 503 y Nginx reintenta en el otro nodo (también para POST, porque un 502/503 significa que el
-pedido no se procesó, así no se duplica); tras 2 fallos, Nginx deja de mandarle tráfico 10 s.
+Decir: el Apache del nodo caído ya no encuentra a su Express y contesta un error (500 o 503); Nginx lo cuenta como fallo y reintenta en el otro nodo (también para POST: el INSERT es una sola sentencia, un error no deja pedidos a medias);
+tras 2 fallos, Nginx deja de mandarle tráfico 10 s.
 
 ## 8. Base de datos — Brissvey y Juan (2,5 min)
 
@@ -150,7 +150,7 @@ persona para la cocina, certificado de una CA real, base de datos con réplica, 
 **¿Por qué Nginx y también Apache?** Nginx es el balanceador y el punto único de entrada con HTTPS; cada nodo tiene su Apache
 porque el proyecto exige un servidor web por nodo que sirva lo estático y reenvíe a la aplicación (Decisión 2).
 
-**¿Qué pasa si se cae un nodo?** Nginx lo detecta por errores (502/503 o conexión rechazada), reintenta la petición en el otro nodo y
+**¿Qué pasa si se cae un nodo?** Nginx lo detecta por errores (500, 502, 503, timeout o conexión rechazada), reintenta la petición en el otro nodo y
 tras 2 fallos deja de enviarle tráfico 10 s. El usuario no lo nota.
 
 **¿Y si se cae PostgreSQL?** No se pueden crear ni consultar pedidos (`/api/ready` pasa a 503), pero los nodos siguen vivos y se
@@ -158,8 +158,8 @@ reconectan solos al volver la base. Es el punto único de falla que declaramos; 
 
 **¿Cómo se comparten los pedidos entre nodos?** Ningún nodo guarda nada en memoria: ambos escriben y leen en el mismo PostgreSQL.
 
-**¿Por qué reintentan también los POST, si podría duplicar un pedido?** Solo se reintenta ante 502/503 (el nodo no procesó nada).
-Se quitó el 500 a propósito porque ahí el pedido podría haberse guardado ya.
+**¿Por qué reintentan también los POST, si podría duplicar un pedido?** Solo se reintenta ante fallos del nodo (500, 502, 503 o timeout). Un error de Express no deja un pedido a medias porque el INSERT es una sola sentencia.
+El riesgo que queda es un timeout justo después de guardar; es un límite que declaramos.
 
 **¿Cómo protegen la cocina?** Usuario y contraseña en Nginx para `cocina.html`, `GET /api/cocina` y `PATCH /api/pedidos/:n`. Es HTTP
 Basic con una clave de desarrollo; para uso real harían falta cuentas por persona.

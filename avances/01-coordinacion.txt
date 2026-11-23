@@ -308,3 +308,18 @@ Como lo probe: Corri bash docs/pruebas/permisos.sh y las auditorias de archivos
   levantado.
 Bloqueos o dudas: Ninguno. Falta que Juan genere la evidencia del cluster y que
   Randal ejecute las pruebas de carga de la seccion 13.
+
+Fecha: 23/11/2026
+Que hice: Al correr docs/pruebas/evidencias-fase3.sh vi que, con app1 detenido,
+  Apache contestaba 500 (DNS lookup failure) y Nginx no reintentaba en el otro
+  nodo, asi que fallaban peticiones. Agregue http_500 a proxy_next_upstream y
+  timeouts cortos en nginx/proxy.inc, y actualice docs/GUION_DEMO.md,
+  docs/ARQUITECTURA.md y docs/ESTADO_DEL_PROYECTO.md para que digan lo mismo.
+Archivos que toque: nginx/proxy.inc, docs/GUION_DEMO.md, docs/ARQUITECTURA.md,
+  docs/ESTADO_DEL_PROYECTO.md, docs/evidencias/fase3/evidencia-fase3.txt,
+  avances/01-coordinacion.txt
+Rama / numero de PR: docs/fase3-evidencias-y-guion-final (PR hacia main)
+Como lo probe: Con docker compose stop app1, 8 GET a /api/health dieron 200 y
+  6 POST a /api/pedidos dieron 201; despues docker compose start app1 y el
+  balanceo volvio a alternar nodo-1 y nodo-2.
+Bloqueos o dudas: Ninguno.
