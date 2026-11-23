@@ -1,8 +1,10 @@
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
+import encoding from 'k6/encoding';
 
 export const options = {
+  insecureSkipTLSVerify: true, // certificado de desarrollo (mkcert/autofirmado)
   vus: 5,
   duration: '1m',
   thresholds: {
@@ -18,7 +20,7 @@ export default function () {
   };
 
   const creado = http.post(
-    'http://host.docker.internal:8080/api/pedidos',
+    'https://host.docker.internal:8443/api/pedidos',
     JSON.stringify(pedido),
     { headers: { 'Content-Type': 'application/json' } }
   );
@@ -31,9 +33,15 @@ export default function () {
 
   if (creado.status === 201 && numero) {
     const actualizado = http.patch(
-      `http://host.docker.internal:8080/api/pedidos/${numero}`,
+      `https://host.docker.internal:8443/api/pedidos/${numero}`,
       JSON.stringify({ estado: 'listo' }),
-      { headers: { 'Content-Type': 'application/json' } }
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          // PATCH exige la clave de cocina (nginx/htpasswd)
+          Authorization: 'Basic ' + encoding.b64encode('cocina:toyo2026'),
+        },
+      }
     );
 
     check(actualizado, {

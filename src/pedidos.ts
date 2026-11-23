@@ -30,9 +30,26 @@ interface PedidoDB {
 
 // Si existe DATABASE_URL, utilizamos PostgreSQL.
 // Si no existe, seguimos utilizando memoria.
+// En el clúster se define REQUIRE_DB=true: si falta DATABASE_URL el nodo NO arranca,
+// en vez de caer en silencio a memoria (cada nodo tendría pedidos distintos).
+if (process.env.REQUIRE_DB === 'true' && !process.env.DATABASE_URL) {
+  throw new Error('REQUIRE_DB=true pero DATABASE_URL no está definida');
+}
+
 const pool = process.env.DATABASE_URL
-  ? new Pool({ connectionString: process.env.DATABASE_URL })
+  ? new Pool({
+      connectionString: process.env.DATABASE_URL,
+      max: 10,
+      idleTimeoutMillis: 30_000,
+      connectionTimeoutMillis: 5_000, // no dejar peticiones colgadas si la BD no responde
+    })
   : null;
+
+// Sin este manejador, un error en una conexión inactiva (por ejemplo, PostgreSQL se
+// reinicia) lanza una excepción no controlada y el proceso Node se cae.
+pool?.on('error', (error) => {
+  console.error('Error en una conexión inactiva de PostgreSQL:', error.message);
+});
 
 // Almacenamiento alternativo en memoria.
 const pedidos: Pedido[] = [];

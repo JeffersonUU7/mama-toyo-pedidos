@@ -6,3 +6,5 @@ dist/
 certs/*.key
 certs/*.pem
 certs/*.crt
+# Salida cruda de k6 (79 MB): se guarda solo el resumen en docs/pruebas/resultados/
+docs/pruebas/resultados/carga-progresiva.json
