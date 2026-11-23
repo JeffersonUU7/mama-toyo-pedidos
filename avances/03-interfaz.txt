@@ -59,3 +59,18 @@ Bloqueos o dudas: (1) Brissvey: cuando cambies data.ts a rangos, usa precioMin/p
   (index.html) y reenviar /menu, /pedidos, /cocina. (3) /cocina no tiene forma de marcar un pedido como
   "listo"; si el equipo la quiere, hace falta una ruta nueva (ej. PATCH /pedidos/:numero) y asi.
 <<<
+
+>>> ENTRADA
+Fecha: 2026-11-22
+Que hice: Agregue el boton "Marcar listo" en la vista de cocina (web/cocina.html, web/cocina.js).
+  - Cada pedido pendiente tiene un boton que llama PATCH /api/pedidos/:numero con {"estado":"listo"}
+    (ruta de Brissvey, Decisiones 1 y 5). Al responder bien, el pedido desaparece de pendientes.
+  - Mientras se guarda, el boton se desactiva y dice "Guardando..." (evita doble clic).
+  - Si el servidor falla, se muestra un aviso con el motivo, el pedido sigue en la lista y el aviso
+    se mantiene hasta el siguiente intento (el refresco automatico de 5 s no lo borra).
+  - Estilo del boton (verde) en web/styles.css.
+Archivos que toque: web/cocina.js, web/styles.css, avances/03-interfaz.txt
+Rama / numero de PR: avance/yessica-boton-listo / PR #18
+Como lo probe: (completar con lo que pruebes tu en el cluster, ver pasos en la lista de pruebas)
+Bloqueos o dudas:
+<<<

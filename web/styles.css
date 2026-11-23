@@ -107,6 +107,8 @@ footer.node b { color: var(--ink); }
 .ticket .who { font-weight: 600; margin-bottom: 6px; }
 .ticket ul { margin: 0 0 8px; padding-left: 18px; }
 .ticket .t { font-weight: 700; color: var(--brand-dark); }
+.ticket .btn.ready { margin-top: 10px; background: var(--ok); }
+.ticket .btn.ready:hover:not(:disabled) { background: #256340; }
 .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
 .toolbar .btn { width: auto; padding: 8px 14px; }
 .empty-state { text-align: center; color: var(--muted); padding: 40px 0; }
