@@ -1,4 +1,4 @@
-# Estado del Proyecto — Mamá Toyo (22/11/2026)
+# Estado del Proyecto — Mamá Toyo (24/11/2026)
 
 > Documento único de referencia para la defensa. Resume qué está hecho, qué falta y cómo verificarlo.
 > Fuente de verdad: `git log`, `avances/` y el código en `main`.
@@ -12,7 +12,7 @@
 | Clase 29 — Propuesta | ✅ | Equipo formado, repo creado |
 | Clase 33 — Fase 2 | ✅ | Contenedor + Apache/HTTPS + docs |
 | Clase 36 — Clúster + BD | ✅ | Nginx + 2 nodos + PostgreSQL, botón "Marcar listo" (PR #18), guion de demo |
-| Clase 39 — Final + Defensa | 🟡 | Falta **ejecutar** las pruebas de carga de la sección 13 (Randal) y ensayar la defensa |
+| Clase 39 — Final + Defensa | 🟡 | Todo implementado y probado; falta grabar y entregar el video de defensa |
 
 ---
 
@@ -30,7 +30,7 @@
 | Nginx como entrada única, HTTPS en `:8443`, `:8080` redirige | ✅ | Validado con `docker compose up` (22/11) |
 | Nginx → Apache por HTTPS; `apache1`/`apache2` sirven `web/` y reenvían a su Express | ✅ | PR #16 y auditoría |
 | Balanceo round-robin (`zone`) y failover (`max_fails=2 fail_timeout=10s`) | ✅ | `curl` alterna `nodo-1`/`nodo-2` |
-| Failover también para POST/PATCH (ante 500/502/503 o timeout) | ✅ | 6 POST con `app1` detenido → 6 × `201` (22/11) |
+| Failover también para POST/PATCH (ante 500/502/503 o timeout) | ✅ | 6 POST con `app1` detenido → 6 × `201` (23/11; evidencia en `docs/evidencias/fase3/`) |
 | PostgreSQL con volumen `pgdata` y healthcheck | ✅ | `docker compose ps` |
 | Nodos resistentes al reinicio de PostgreSQL | ✅ | `restart db` → nodos siguen vivos (22/11) |
 | Seguridad: login de cocina, límite de peticiones, CORS cerrado, contenedor sin root, etc. | ✅ | `docs/SEGURIDAD_Y_MONITOREO.md` |
@@ -40,20 +40,17 @@
 
 ### Pruebas de carga (Randal)
 - Hechas: baseline y pruebas de 5 usuarios (por HTTP, 19–20/11) y progresiva hasta **300** usuarios (resumen en `docs/pruebas/resultados/resumen-carga-progresiva.md`). Solo midió `/api/health`.
-- **Falta:** ejecutar la sección 13 de `docs/PRUEBAS_DE_CARGA.md` (flujo completo con PostgreSQL, hasta 400 usuarios, 2 nodos contra 1, por HTTPS) y pegar los resultados.
+- Sección 13 ejecutada el 24/11/2026 (flujo completo con PostgreSQL, 400 usuarios, 2 nodos contra 1, por HTTPS): resultados en `docs/PRUEBAS_DE_CARGA.md`, sección 13.4.
 
 ---
 
-## Qué FALTA
+## Antes de entregar
 
-| Tarea | Responsable | Estado |
-|---|---|---|
-| Ejecutar las pruebas de carga de la sección 13 y registrar resultados | Randal | ⬜ Scripts y comandos listos |
-| Revisar y poder explicar seguridad y monitoreo (`docs/SEGURIDAD_Y_MONITOREO.md`) | Randal | ⬜ |
-| Repetir la persistencia (`docker compose down` y `up`) con la versión nueva | Juan / Brissvey | ⬜ |
-| Registrar en `avances/` lo probado ("Cómo lo probé"), incluido el PR #18 | Cada quien (Yessica: `avances/03`) | ⬜ |
-| Ensayar la demo completa con `docs/GUION_DEMO.md` y la defensa oral | **Todos** | ⬜ |
-| Revisar en GitHub si el repositorio es público o privado (los docs dicen privado) | Jefferson | ⬜ |
+| Tarea | Estado |
+|---|---|
+| Pruebas de carga de la sección 13 | ✅ Ejecutadas el 24/11/2026 |
+| Verificación final del clúster (failover, persistencia, cocina, monitoreo) | ✅ `docs/evidencias/final/verificacion-final.txt` |
+| Video de defensa (mínimo 15 min, todos en cámara) | ⬜ Por grabar |
 
 ---
 

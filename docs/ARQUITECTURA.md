@@ -1,6 +1,6 @@
 # Arquitectura
 
-## Fase 2: lo que funciona hoy
+## Base: contenedor + Apache + HTTPS (Fase 2)
 
 ```mermaid
 flowchart LR
@@ -41,7 +41,7 @@ El contenedor Express usa PostgreSQL si existe `DATABASE_URL`; si no, usa memori
 - El contenedor Express no se publica al exterior: solo Apache puede llegar a él.
 - La API valida los datos de entrada (cantidad de 1 a 20 por plato, hasta 20 líneas, nombre de hasta 60 caracteres).
 
-## Clúster: estado actual (Ronda 3)
+## Arquitectura final: clúster con Nginx (Fase 3 y entrega final)
 
 `docker-compose.yml` levanta:
 

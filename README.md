@@ -7,29 +7,28 @@ El local es pequeño y en el almuerzo se forman filas: el sitio permite ver el m
 y le da a la cocina una lista de pedidos pendientes. El menú y los precios son los del comedor
 (ver [docs/MENU.md](docs/MENU.md)); cada plato tiene un precio mínimo y uno máximo.
 
-## Arquitectura (Fase 2: contenedor + servidor web + HTTPS)
+## Arquitectura
 
 ```mermaid
 flowchart LR
-    N["Navegador"] -- "HTTPS :8443" --> A["Apache 2.4<br/>sirve web/ (HTML, CSS, JS)"]
-    A -- "ProxyPass /api" --> E["Contenedor Express/TypeScript<br/>:3000"]
-    E --> D[("PostgreSQL<br/>pedidos persistentes")]
+    N["Navegador"] -- "HTTPS :8443<br/>(HTTP :8080 redirige)" --> NG["Nginx<br/>balanceador y entrada única"]
+    NG -- "HTTPS" --> A1["Apache 1<br/>sirve web/ y ProxyPass /api"] --> E1["Express/TypeScript<br/>nodo-1"] --> DB[("PostgreSQL")]
+    NG -- "HTTPS" --> A2["Apache 2<br/>sirve web/ y ProxyPass /api"] --> E2["Express/TypeScript<br/>nodo-2"] --> DB
 ```
 
-Un solo comando levanta Apache y el contenedor Express (Docker Compose). Apache entrega la interfaz estática de
-`web/` y reenvía las peticiones `/api/...` al contenedor con `ProxyPass`. La explicación completa, paso a paso,
-está en [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md).
+Todo corre en Docker Compose. **Nginx** es el único punto de entrada: termina el HTTPS, reparte las peticiones entre los dos nodos
+(round-robin) y, si un nodo falla, reintenta en el otro (failover). Cada nodo es un **Apache** con HTTPS que entrega la interfaz estática de
+`web/` y reenvía `/api/...` con `ProxyPass` a su contenedor **Express/TypeScript**; los dos nodos son idénticos y guardan los pedidos en el mismo
+**PostgreSQL**. La explicación paso a paso está en [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md) y las decisiones en [docs/DECISIONES.md](docs/DECISIONES.md).
 
-**Arquitectura objetivo (Fases 3 y 4):** clúster con balanceo de carga, decidido en [docs/DECISIONES.md](docs/DECISIONES.md).
+| Pieza | Qué hace | Dónde está |
+|---|---|---|
+| Nginx | Entrada única, HTTPS, balanceo, failover, límite de peticiones y login de cocina | `nginx/` |
+| Apache (×2) | HTTPS, entrega `web/`, `ProxyPass /api` hacia su Express | `apache/` |
+| Express/TypeScript (×2) | API del comedor: menú, pedidos, cocina; `/api/health` y `/api/ready` | `src/`, `Dockerfile` |
+| PostgreSQL | Pedidos persistentes | `docker-compose.yml` |
 
-```mermaid
-flowchart LR
-    N["Navegador"] -- "HTTPS" --> NG["Nginx<br/>balanceador"]
-    NG --> A1["Apache 1"] --> E1["Express 1"] --> DB[("PostgreSQL")]
-    NG --> A2["Apache 2"] --> E2["Express 2"] --> DB
-```
-
-## Cómo levantarlo (Fase 2)
+## Cómo levantar solo Apache + Express (Fase 2)
 
 **Requisitos:** Docker Desktop abierto, Git Bash y [mkcert](https://github.com/FiloSottile/mkcert)
 (`winget install FiloSottile.mkcert`). Con mkcert el navegador muestra el candado sin advertencias; sin él, funciona con

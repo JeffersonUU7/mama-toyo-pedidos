@@ -323,3 +323,21 @@ Como lo probe: Con docker compose stop app1, 8 GET a /api/health dieron 200 y
   6 POST a /api/pedidos dieron 201; despues docker compose start app1 y el
   balanceo volvio a alternar nodo-1 y nodo-2.
 Bloqueos o dudas: Ninguno.
+
+Fecha: 24/11/2026
+Que hice: Cerre lo que faltaba para la entrega final. Ejecute las pruebas de
+  carga de la seccion 13 (flujo completo con PostgreSQL, 400 usuarios, 2 nodos
+  contra 1 nodo, por HTTPS) con docs/pruebas/ejecutar-seccion13.sh y los
+  resultados quedaron en docs/PRUEBAS_DE_CARGA.md. Agregue
+  docs/pruebas/verificacion-final.sh (balanceo, failover, persistencia,
+  cocina y monitoreo) y su evidencia en docs/evidencias/final/. Puse
+  connectiontimeout=2 en apache/httpd-nodo.conf para que el failover no se
+  demore cuando un nodo cae. Actualice README, ARQUITECTURA, ESTADO y REPARTO.
+Archivos que toque: README.md, LEEME_PRIMERO.txt, apache/httpd-nodo.conf,
+  docs/ARQUITECTURA.md, docs/PRUEBAS_DE_CARGA.md, docs/ESTADO_DEL_PROYECTO.md,
+  docs/REPARTO.md, docs/pruebas/ (3 scripts), docs/evidencias/final/,
+  avances/01-coordinacion.txt
+Rama / numero de PR: final/entrega-final (PR hacia main)
+Como lo probe: Corri verificacion-final.sh y ejecutar-seccion13.sh con el
+  cluster en Docker Desktop; los resultados estan en los archivos indicados.
+Bloqueos o dudas: Ninguno.
