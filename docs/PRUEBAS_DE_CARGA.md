@@ -200,9 +200,7 @@ Los resultados muestran un comportamiento satisfactorio del endpoint de salud co
 
 ## 13. Pruebas de la Ronda 3: dimensionamiento con 400 usuarios, 1 nodo contra 2 nodos
 
-Estas son las pruebas que faltan para validar el dimensionamiento (requisito de la Ronda 3). Todo está preparado para
-ejecutarse con comandos; **los resultados de esta sección se llenan con lo que salga de la ejecución real** (no se escriben números
-de antemano).
+Pruebas ejecutadas para validar el dimensionamiento (requisito de la Ronda 3). Los resultados de la sección 13.4 son los que salieron de la ejecución real; no se escribieron números de antemano.
 
 ### 13.1 Qué se ejecuta
 
@@ -247,7 +245,7 @@ inicio; es el comportamiento del failover y conviene mencionarlo.
 Cada ejecución guarda un **resumen** (unos KB) en `docs/pruebas/resultados/<prueba>-<etiqueta>-400vus.json`. No guardes la salida
 cruda de k6 (`--out json`): pesa decenas de MB (la de la prueba del 20/11 pesaba 79 MB).
 
-### 13.4 Resultados (completar con los datos reales)
+### 13.4 Resultados
 
 Genera la tabla con:
 
@@ -257,9 +255,19 @@ node docs/pruebas/resumir.js docs/pruebas/resultados/carga-flujo-completo-2nodos
   docs/pruebas/resultados/carga-progresiva-2nodos-400vus.json
 ```
 
-y pégala aquí debajo, con la fecha y el equipo donde se ejecutó:
+Resultado de la ejecución (se escribe con `docs/pruebas/completar-seccion13.js`):
 
-> **Pendiente de ejecutar** (responsable: Randal). Fecha: ____ · Equipo / recursos de Docker: ____
+**Ejecutado el 24/11/2026** · Equipo: Docker Desktop con 12 CPU y 7.6 GB de RAM. Resultados generados con `docs/pruebas/ejecutar-seccion13.sh`.
+
+| Prueba | VU máx. | Solicitudes | Promedio | p95 | Máximo | Fallidas | Checks OK | Umbrales |
+|---|---|---|---|---|---|---|---|---|
+| C:\Users\Jhost\Documents\mama-toyo-pedidos\docs\pruebas\resultados\carga-flujo-completo-2nodos-400vus | 400 | 43407 | 9.2 ms | 16.2 ms | 917.2 ms | 0.00 % | 100.00 % | cumplidos |
+| C:\Users\Jhost\Documents\mama-toyo-pedidos\docs\pruebas\resultados\carga-flujo-completo-1nodo-400vus | 400 | 43199 | 12.2 ms | 23.6 ms | 3011.6 ms | 0.00 % | 100.00 % | cumplidos |
+| C:\Users\Jhost\Documents\mama-toyo-pedidos\docs\pruebas\resultados\carga-progresiva-2nodos-400vus | 400 | 31442 | 6.0 ms | 10.0 ms | 339.7 ms | 0.00 % | 100.00 % | cumplidos |
+
+- Flujo completo con 400 usuarios virtuales: con 2 nodos el p95 fue 16.2 ms y las solicitudes fallidas 0.00 %; con 1 nodo, 23.6 ms y 0.00 %. Sobre `/api/health` con 2 nodos el p95 fue 10.0 ms y las fallidas 0.00 %.
+- Los tres umbrales (p95 < 500 ms, fallidas < 1 %, verificaciones > 99 %) se cumplieron en las tres pruebas.
+- El segundo nodo mejora el resultado: con 1 nodo el p95 pasa de 16.2 a 23.6 ms.
 
 ### 13.5 Cómo interpretar y qué concluir
 

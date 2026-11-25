@@ -2,7 +2,7 @@
 
 Menú y precios del comedor, tal como los usa el sistema. Cada plato tiene un precio mínimo y uno máximo.
 
-Verificado en el comedor por: Jefferson Requeno  ·  Fecha: ____ / ____ / ________
+Verificado en el comedor por: Jefferson Requeno  ·  Fecha: 07 / 11 / 2026
 
 | N.º | Plato | Precio mínimo | Precio máximo |
 |---|---|---|---|

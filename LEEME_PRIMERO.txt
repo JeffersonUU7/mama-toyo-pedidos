@@ -47,7 +47,7 @@ En Git Bash (abierto en cualquier lugar):
   git clone https://github.com/JeffersonUU7/mama-toyo-pedidos.git
   cd mama-toyo-pedidos
 
-(Es un repositorio privado: solo lo ves si aceptaste la invitacion.)
+(El repositorio es publico: cualquiera puede verlo y clonarlo; para subir cambios necesitas haber aceptado la invitacion.)
 
 
 PASO 3. COMPROBAR QUE FUNCIONA

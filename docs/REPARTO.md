@@ -33,7 +33,7 @@ El detalle de cada tarea y su registro de avances está en la carpeta `avances/`
 - [x] (2) Ruta `PATCH /api/pedidos/:numero` para marcar un pedido como listo (Decisión 5) (Brissvey, PR #13)
 - [x] (3) Botón "marcar listo" en la vista de cocina (Yessica, PR #18)
 - [x] (5) Demostrar el failover con la base de datos (Juan, 15/11: `docker compose stop app1` → sitio responde, pedido visible)
-- [ ] (6) Pruebas de carga (1 y 2 nodos, hasta 400 usuarios virtuales) y resultados en `docs/`. Hecho: baseline, pruebas de 5 usuarios y progresiva hasta 300 (Randal, PR #6 y #17). Falta ejecutar la sección 13 de `docs/PRUEBAS_DE_CARGA.md` (scripts ya preparados)
+- [x] (6) Pruebas de carga (1 y 2 nodos, hasta 400 usuarios virtuales) y resultados en `docs/`: sección 13 de `docs/PRUEBAS_DE_CARGA.md`, ejecutada el 24/11/2026
 - [x] (4) Preparar el Apache por nodo (`apache1` y `apache2`), Decisión 2, etapa 2 (Josué/Juan, PR #16)
 - [x] (1) Guion de la demo (qué se muestra y quién lo muestra): `docs/GUION_DEMO.md` (Jefferson)
 
@@ -41,7 +41,7 @@ El detalle de cada tarea y su registro de avances está en la carpeta `avances/`
 
 - [x] (4) HTTPS en el balanceador Nginx (validado con `docker compose up` el 22/11/2026)
 - [x] (6) Seguridad y monitoreo aplicados (temas de la Clase 37): ver `docs/SEGURIDAD_Y_MONITOREO.md`. Implementado en las ramas de auditoría; Randal debe revisarlo y poder explicarlo
-- [ ] (6) Validar el dimensionamiento con pruebas de carga reales (ejecutar sección 13 de `docs/PRUEBAS_DE_CARGA.md`)
+- [x] (6) Dimensionamiento validado con pruebas de carga reales (sección 13 de `docs/PRUEBAS_DE_CARGA.md`, 24/11/2026)
 - [x] (1) Documentación final y diagrama actualizado (22/11/2026; revisar una última vez antes de entregar)
 - [ ] (todos) Preparar y ensayar la defensa oral; todos deben poder explicar todo el sistema
 
